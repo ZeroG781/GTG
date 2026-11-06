@@ -1,6 +1,6 @@
-# GTG Converter – GIS to Game
+# ZeroG's GIS to GAME converter (GTG) - An open source solution to support building realistic virtual worlds
 
-ZeroG’s GIS TO GAME (GTG) Converter turns any place on Earth into game-ready terrain data. 
+ZeroG’s GIS TO GAME Converter (GTG) turns any place on Earth into game-ready terrain data. 
 You pick a sector on a map, and the tool produces a georeferenced heightmap, a satellite image, surface masks for material painting, shapefiles of roads, rivers, forests and buildings, and a reshaped (“morphed”) heightmap in which roads are graded, rivers are carved and buildings stand on smoothed ground. 
 
 Optional special zones add craters, trenches, berms, dams, pits, dunes and other features on top.
