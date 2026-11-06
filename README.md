@@ -5,8 +5,6 @@ Pick a map sector, then export heightmaps, satellite images, surface masks and s
 
 No install, no account, no API keys.
 
-**[▶ Open the tool](https://USERNAME.github.io/gtg-converter/)** · [Changelog](CHANGELOG.md) · [Data sources](DATA_SOURCES.md) · [Privacy](PRIVACY.md)
-
 <!-- Add a screenshot as docs/screenshot.png, then remove this comment line -->
 ![Screenshot](docs/screenshot.png)
 
@@ -23,17 +21,15 @@ No install, no account, no API keys.
 
 ## Quick start
 
+It is a single HTML file. Download `index.html` and open it in your browser.
+An internet connection is still needed for map tiles, OpenStreetMap data and the libraries loaded from CDNs.
+
 1. Open the tool in a current Chrome, Edge or Firefox (desktop).
 2. Type coordinates into the search box (e.g. `39.92, 25.23`) and press Enter.
    Tip: right-click a place in Google Maps or OpenStreetMap to copy its coordinates.
 3. Set the sector size in **1 · Map sector dimension & resolution**.
 4. Press **Export sector with default settings** – or export each part from sections 2–4.
 5. Use **Export params** (section 1) for the engine import values, and copy `ATTRIBUTION.txt` from the ZIP into your map credits.
-
-## Run it locally
-
-It is a single HTML file. Download `index.html` and open it in your browser.
-An internet connection is still needed for map tiles, OpenStreetMap data and the libraries loaded from CDNs.
 
 ## Data and attribution – read before you publish a map
 
