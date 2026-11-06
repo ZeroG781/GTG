@@ -6,7 +6,7 @@ Pick a map sector, then export heightmaps, satellite images, surface masks and s
 No install, no account, no API keys.
 
 <!-- Add a screenshot as docs/screenshot.png, then remove this comment line -->
-![Screenshot](docs/screenshot.png)
+![Screenshot](Screenshot.png)
 
 ## Features
 
