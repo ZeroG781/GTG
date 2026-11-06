@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ZeroG's GIS TO GAME (GTG) CONVERTER v1.0</title>
+<title>ZeroG's GIS to GAME Converter (GTG) v1.0</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -402,7 +402,7 @@ kbd{font:10px var(--m);background:var(--card);border:1px solid var(--line);borde
 <header>
   <div class="brand" id="hTitle">
     <div class="logo"><i class="i fa-solid fa-earth-europe"></i></div>
-    <div><h1>ZeroG's GIS TO GAME (GTG) CONVERTER<span class="vtag">v1.0 · UTM</span><span class="savetag" id="saveTag" data-tip="Session is saved automatically in this browser and restored on the next visit."><i class="i fa-solid fa-floppy-disk"></i><span>Auto-save</span></span></h1><div class="sub">Geo-referenced terrain · imagery · masks · vectors</div></div>
+    <div><h1>ZeroG's GIS to GAME Converter (GTG)<span class="vtag">v1.0 · UTM</span><span class="savetag" id="saveTag" data-tip="Session is saved automatically in this browser and restored on the next visit."><i class="i fa-solid fa-floppy-disk"></i><span>Auto-save</span></span></h1><div class="sub">Geo-referenced terrain · imagery · masks · vectors</div></div>
   </div>
     <button class="btn soft" id="btnManual" data-tip="Manual: every function explained with illustrations."><i class="i fa-solid fa-book-open"></i><span>Manual</span></button>
   <button class="btn soft" id="btnWizard" data-tip="Step-by-step tour of the visible controls. Use ← / → to move."><i class="i fa-solid fa-wand-magic-sparkles"></i><span>Wizard</span></button>
@@ -900,7 +900,7 @@ kbd{font:10px var(--m);background:var(--card);border:1px solid var(--line);borde
 </div></div>
 
 <div class="modal" id="manualModal"><div class="win">
-  <div class="wh"><i class="i fa-solid fa-book-open"></i><b>Manual</b><span class="hint" style="margin-left:8px">GTG Converter</span><div class="spacer"></div><button class="btn sm" id="manPrint" data-tip="Print or save as PDF"><i class="i fa-solid fa-print"></i></button><button class="btn sm ghost icon" id="manClose"><i class="i fa-solid fa-xmark"></i></button></div>
+  <div class="wh"><i class="i fa-solid fa-book-open"></i><b>Manual</b><span class="hint" style="margin-left:8px">ZeroG's GIS to GAME Converter (GTG)</span><div class="spacer"></div><button class="btn sm" id="manPrint" data-tip="Print or save as PDF"><i class="i fa-solid fa-print"></i></button><button class="btn sm ghost icon" id="manClose"><i class="i fa-solid fa-xmark"></i></button></div>
   <div class="wb"><nav id="manToc"></nav><article id="manBody"></article></div>
 </div></div>
 <!-- wizard -->
@@ -2158,7 +2158,7 @@ const HELP = [
     { el: 'btnExportHeight', name: 'Export', text: 'ZIP with the selected formats, world files and .prj. Engine import values are in Export params (section 1). The line below shows the expected size and time; large exports ask for confirmation first and can be cancelled.' }
   ] },
   { key: 's3', title: '3 · Satellite map', card: 'sec-3', items: [
-    { el: 'w-sat', name: 'Imagery source', text: 'Sentinel-2 cloudless (EOX) is the default: cloud-free 10 m colour. The 2016 layer is CC BY 4.0 (commercial use allowed with attribution); 2018 and later are non-commercial only. OpenTopoMap is a rendered map (CC BY-SA) – keep exports small. XYZ and WMS let you use your own or official orthophotos (e.g. 20 cm DOP) – you are responsible for their licence. OpenStreetMap tiles are a map background only: their policy does not allow bulk download.' },
+    { el: 'w-sat', name: 'Imagery source', text: 'Sentinel-2 cloudless (EOX) is the default: cloud-free 10 m colour. The 2016 layer is CC BY 4.0 (commercial use allowed with attribution); 2018 and later are non-commercial only. OpenTopoMap is a rendered map (CC BY-SA) – keep exports small. XYZ and WMS let you use your own or official orthophotos (e.g. 20 cm DOP) – you are responsible for their licence.' },
     { el: 'w-satCustom', name: 'Custom XYZ / WMS', text: 'XYZ: URL with {z}/{x}/{y} and its max zoom. WMS: enter the URL, "Check layers", pick a layer. If the server offers the sector UTM projection, images arrive 1:1 without resampling. Some servers block browser access (CORS).' },
     { el: 'w-satRes', name: 'Resolution', text: 'Meters per output pixel. A warning appears if you go finer than the source can deliver or the tile budget limits the source zoom.' },
     { el: 'w-satPx', name: 'Image pixels', text: 'Width and height of the exported image. They follow from sector size ÷ resolution and update with the section 1 presets. Typing a pixel value changes the resolution.' },
@@ -2362,7 +2362,6 @@ const OSM_ATTR = '© <a href="https://www.openstreetmap.org/copyright" target="_
 const OTM_ATTR = 'Map data: ' + OSM_ATTR + ', SRTM | Map style: © <a href="https://opentopomap.org" target="_blank" rel="noopener">OpenTopoMap</a> (CC-BY-SA)';
 const bases = {
   'OpenTopoMap': L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { maxZoom: 17, attribution: OTM_ATTR }),
-  'OpenStreetMap': L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: OSM_ATTR }),
   'Sentinel-2 cloudless 2016 (EOX)': L.tileLayer('https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/GoogleMapsCompatible/{z}/{y}/{x}.jpg', { maxZoom: 18, maxNativeZoom: 13, attribution: 'Sentinel-2 cloudless – https://s2maps.eu by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016 & 2017)' })
 };
 const OV_SHORT = { 'Satellite (ESRI)': 'ESRI Sat', 'Hybrid (Satellite + OSM)': 'Hyb OSM', 'Hybrid (Satellite + OpenTopo)': 'Hyb Topo', 'OpenTopoMap': 'OpenTopo', 'OpenStreetMap': 'OSM', 'Sentinel-2 cloudless 2016 (EOX)': 'S2 2016' };
@@ -3517,7 +3516,7 @@ document.addEventListener('click', e => {
 // ---------- export helpers ----------
 function infoText(extra = {}) {
   const s = sector(), hd = hmDims(), p = prof();
-  const L = [`ZeroG's GIS TO GAME (GTG) CONVERTER v${VERSION} – export info`, `Map: ${S.name}`, `Created: ${new Date().toISOString()}`];
+  const L = [`ZeroG's GIS to GAME Converter (GTG) v${VERSION} – export info`, `Map: ${S.name}`, `Created: ${new Date().toISOString()}`];
   if (extra.title) L.push(`Content: ${extra.title}`);
   L.push('', `CRS: WGS84 / UTM zone ${s.zone}${s.north ? 'N' : 'S'} (EPSG:${s.epsg})`, `Sector SW corner (game origin 0,0): ${s.rot ? (([e, n]) => `E ${e.toFixed(2)}  N ${n.toFixed(2)}`)(s.frameToUtm(s.E0, s.N0)) : `E ${s.E0}  N ${s.N0}`}`, ...(s.rot ? [`Sector rotation: ${s.rot.toFixed(2)}° clockwise from UTM grid north – terrain X/Y axes follow the rotated sector; GeoTIFF and world files carry the rotation, .asc does not.`] : []), `Sector size: ${s.W} m x ${s.H} m`, `Centre: ${S.lat}, ${S.lon}`,
     `Engine profile: ${p.label}`, `Heightmap grid: ${hd.w} x ${hd.h} samples, spacing ${hd.res.toFixed(4)} m` + (S.profile !== 'custom' && p.vertex ? ' (samples sit exactly on the sector edges)' : ''), '');
@@ -3675,7 +3674,7 @@ function attributionText() {
   const sat = S.satSource === 's2' ? 'Imagery: ' + s2Attribution() : S.satSource === 'opentopo' ? 'Map image: map data © OpenStreetMap contributors, SRTM | map style © OpenTopoMap (CC-BY-SA) – derived images must be shared under CC BY-SA.' : 'Imagery: your own XYZ / WMS source – check its licence.';
   L.push(sat);
   L.push('Vectors, masks and place names: © OpenStreetMap contributors, Open Database License (ODbL) 1.0 – https://www.openstreetmap.org/copyright. Data you publish that is derived from OSM must stay available under the ODbL.');
-  L.push('', `Created with GTG Converter v${VERSION}.`);
+  L.push('', `Created with ZeroG's GIS to GAME Converter (GTG) v${VERSION}.`);
   return L.join('\n');
 }
 async function finishZip(zip, name, prog = progress) {
@@ -4931,7 +4930,7 @@ function buildManual() {
   const chap = HELP.map(g => ({ key: g.key, title: g.title, html: (FIG[g.key] ? `<figure>${FIG[g.key]}<figcaption>${esc(T(g.title) || g.title)}</figcaption></figure>` : '') + g.items.map(it => `<h3>${esc(T(it.name) || it.name)}</h3><p>${esc(T(it.text) || it.text)}</p>`).join('') }));
   chap.push({ key: 'keys', title: 'Keyboard & mouse', html: `<div class="kb">${[['Ctrl+Z / Ctrl+Y', 'Undo / Redo'], ['E', 'Edit vertices on / off'], ['Del', 'Remove the selected vertex'], ['Ctrl + drag corner', 'Keep the sector square'], ['Esc', 'Close dialog, cancel template, finish editing'], ['Ctrl+click shape', 'Select / deselect for 4.3 “Selected only”'], ['Click shape', 'Exclude / include in export'], ['Shift+click Scan', 'Force fresh OpenStreetMap download'], ['← / →', 'Wizard steps'], ['Shift+click map (template)', 'Place several copies']].map(([k, v]) => `<kbd>${k}</kbd><span>${esc(T(v) || v)}</span>`).join('')}</div>` });
   chap.push({ key: 'faq', title: 'Troubleshooting', html: [['Out of bounds on import', 'Set 4.1 → Coordinates to “Terrain / world”. Shapes are then in metres from the south-west corner.'], ['WMS does not load', 'Many servers block browser requests (CORS). Try another server or a local file.'], ['Special zone has no effect', 'Check that “Apply special zones” in 4.3 is on, the zone is ticked in 4.2b, and preview the morphed heightmap (4.3), not the plain one (2).'], ['Export is slow', 'Use a larger cell size or a smaller sector. The line under every export button shows the expected size and time.']].map(([q, a]) => `<h3>${esc(T(q) || q)}</h3><p>${esc(T(a) || a)}</p>`).join('') });
-  chap.push({ key: 'credits', title: 'Credits & licences', html: `<p>GTG Converter is free software under the MIT licence. It runs fully in your browser; it has no server and no tracking. Map data is loaded directly from the services below.</p>
+  chap.push({ key: 'credits', title: 'Credits & licences', html: `<p>ZeroG's GIS to GAME Converter (GTG) is free software under the MIT licence. It runs fully in your browser; it has no server and no tracking. Map data is loaded directly from the services below.</p>
 <h3>Data sources – credit them in your published map</h3><ul>
 <li><b>OpenStreetMap</b> – vectors, masks, place names, map background: © OpenStreetMap contributors, ODbL 1.0 (<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">openstreetmap.org/copyright</a>). Loaded via the Overpass API (overpass-api.de, overpass.kumi.systems).</li>
 <li><b>Mapzen Terrain Tiles on AWS</b> – elevation: 3DEP, GMTED2010 and SRTM courtesy of the U.S. Geological Survey; ETOPO1 NOAA; EU-DEM (Copernicus, EU) and further regional sources (<a href="https://github.com/tilezen/joerd/blob/master/docs/attribution.md" target="_blank" rel="noopener">full list</a>).</li>
@@ -4951,7 +4950,7 @@ document.addEventListener('click', e => { if (e.target && e.target.id === 'lnkCr
 $('manClose').onclick = () => $('manualModal').classList.remove('show');
 $('manualModal').onclick = e => { if (e.target.id === 'manualModal') $('manualModal').classList.remove('show'); };
 $('manToc').addEventListener('click', e => { const a = e.target.closest('[data-man]'); if (!a) return; document.querySelectorAll('#manToc a').forEach(x => x.classList.toggle('on', x === a)); $('man-' + a.dataset.man).scrollIntoView({ behavior: 'smooth' }); });
-$('manPrint').onclick = () => { const w = window.open('', '_blank'); if (!w) return toast('Allow pop-ups to print the manual'); w.document.write(`<html><head><title>GTG Converter – Manual</title><style>body{font:12px/1.6 Segoe UI,Arial;color:#111;max-width:800px;margin:30px auto}h2{border-bottom:1px solid #ccc;margin-top:30px}h3{color:#0369a1;margin:12px 0 2px}figure{margin:10px 0}svg{max-width:520px}.kb{display:grid;grid-template-columns:auto 1fr;gap:4px 12px}</style></head><body><h1>GTG Converter v${VERSION} – Manual</h1>${$('manBody').innerHTML}</body></html>`); w.document.close(); setTimeout(() => w.print(), 400); };
+$('manPrint').onclick = () => { const w = window.open('', '_blank'); if (!w) return toast('Allow pop-ups to print the manual'); w.document.write(`<html><head><title>ZeroG's GIS to GAME Converter (GTG) – Manual</title><style>body{font:12px/1.6 Segoe UI,Arial;color:#111;max-width:800px;margin:30px auto}h2{border-bottom:1px solid #ccc;margin-top:30px}h3{color:#0369a1;margin:12px 0 2px}figure{margin:10px 0}svg{max-width:520px}.kb{display:grid;grid-template-columns:auto 1fr;gap:4px 12px}</style></head><body><h1>ZeroG's GIS to GAME Converter (GTG) v${VERSION} – Manual</h1>${$('manBody').innerHTML}</body></html>`); w.document.close(); setTimeout(() => w.print(), 400); };
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('manualModal').classList.contains('show')) $('manualModal').classList.remove('show'); });
 
 // ---------- map toolbar: draw, delete, show/hide ----------
