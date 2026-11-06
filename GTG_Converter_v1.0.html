@@ -219,6 +219,14 @@ aside .warns{display:none!important}
 #warnPop .wn:hover{filter:brightness(1.25)}
 #warnPop .wsec{font:600 10px var(--m);letter-spacing:.06em;text-transform:uppercase;color:var(--mu);margin:6px 0 2px}
 .wbadge{cursor:pointer}
+.mpop{position:absolute;top:38px;left:0;width:330px;padding:10px;display:none;flex-direction:column;gap:8px;z-index:1100}
+.mpop.show{display:flex}
+#gridPop .seg button{flex:1}
+.rhandle{width:18px;height:18px;border-radius:50%;background:#f59e0b;border:2px solid #fff;box-shadow:0 0 8px #000c;display:grid;place-items:center;color:#020617;cursor:grab}
+.rhandle .i{font-size:10px}
+.glab{position:absolute;font:600 10px var(--m);color:#f8fafc;background:#020617b3;padding:0 4px;border-radius:3px;white-space:nowrap;pointer-events:none}
+.glab.v{transform:translate(-50%,-120%)}.glab.h{transform:translate(4px,-50%)}
+.glab.sg{color:#67e8f9}
 #drawPop{position:absolute;top:38px;left:0;width:280px;padding:10px;display:none;flex-direction:column;gap:8px;z-index:1100}
 #drawPop.show{display:flex}
 #mapTL .btn.on{background:#a855f7;color:#fff;border-color:#a855f7}
@@ -226,7 +234,8 @@ aside .warns{display:none!important}
 .vh.sel{background:#ef4444;transform:scale(1.4)}
 .selbtn{width:20px;height:20px;padding:0;border-radius:5px;border:1px solid var(--line);background:var(--card);color:var(--mu);cursor:pointer;display:grid;place-items:center;flex:0 0 20px;font-size:10px}
 .selbtn.on{background:#22d3ee;color:#020617;border-color:#22d3ee}
-@media (max-width:1500px){#mapTL .btn span.lbl{display:none}}
+@media (max-width:1900px){#mapTL .btn span.lbl{display:none}#mapTL .btn{padding:0 9px}#mapTL .btn.on span.lbl{display:inline}}
+#mapTL{right:12px;flex-wrap:wrap;pointer-events:none}#mapTL>*{pointer-events:auto}
 .warns:empty{display:none}
 .wn{display:flex;gap:8px;align-items:flex-start;padding:7px 9px;border-radius:8px;font-size:11px;line-height:1.4;border:1px solid}
 .wn .i{margin-top:2px}
@@ -810,8 +819,8 @@ kbd{font:10px var(--m);background:var(--card);border:1px solid var(--line);borde
 <div id="mapWrap">
   <div id="map"></div>
   <div class="mapui" id="mapTL">
-    <button class="btn" id="btnExpandAll"><i class="i fa-solid fa-angles-down" style="color:var(--ac)"></i>Expand all</button>
-    <button class="btn" id="btnCollapseAll"><i class="i fa-solid fa-angles-up" style="color:var(--mu)"></i>Collapse all</button>
+    <button class="btn" id="btnExpandAll" data-tip="Expand all sections"><i class="i fa-solid fa-angles-down" style="color:var(--ac)"></i><span class="lbl">Expand all</span></button>
+    <button class="btn" id="btnCollapseAll" data-tip="Collapse all sections"><i class="i fa-solid fa-angles-up" style="color:var(--mu)"></i><span class="lbl">Collapse all</span></button>
     <div style="position:relative;display:flex"><button class="btn" id="btnDrawMap" data-tip="Draw a custom shapefile on the map"><i class="i fa-solid fa-pen-ruler" style="color:#f59e0b"></i><span class="lbl">Draw shapefiles</span></button>
       <div class="glass" id="drawPop"><label class="field"><span>Class</span><select id="drawCls"></select></label>
         <div class="g3"><button class="btn sm" data-dshape="Polygon"><i class="i fa-solid fa-draw-polygon"></i>Polygon</button><button class="btn sm" data-dshape="Line"><i class="i fa-solid fa-pen-nib"></i>Line</button><button class="btn sm" data-dshape="Rectangle"><i class="i fa-regular fa-square"></i>Rectangle</button></div>
@@ -819,6 +828,21 @@ kbd{font:10px var(--m);background:var(--card);border:1px solid var(--line);borde
     <button class="btn editSw" id="btnVertsMap" data-tip="Edit shapefile vertices (E)"><i class="i fa-solid fa-bezier-curve" style="color:#c084fc"></i><span class="lbl" id="vertsLbl2">Edit vertices</span></button>
     <button class="btn" id="btnDelMap" data-tip="Delete mode: click shapes on the map to delete them (Esc ends, Undo works)"><i class="i fa-solid fa-trash-can" style="color:#f87171"></i><span class="lbl">Delete shapefile</span></button>
     <button class="btn" id="btnShowMap" data-tip="Show or hide all shapefiles on the map"><i class="i fa-solid fa-eye" id="icoShowMap" style="color:#7dd3fc"></i><span class="lbl" id="lblShowMap">Hide shapefiles</span></button>
+    <div style="position:relative;display:flex"><button class="btn" id="btnRotMap" data-tip="Rotate (tilt) the sector, e.g. to align it with the map grid"><i class="i fa-solid fa-rotate" style="color:#f59e0b"></i><span class="lbl" id="lblRotMap">Rotate sector</span></button>
+      <div class="glass mpop" id="rotPop">
+        <div class="row"><label class="field" style="flex:1"><span>Rotation (° clockwise)</span><input id="rotVal" type="number" step="0.1" min="-180" max="180"></label>
+          <div class="row" style="flex:0 0 auto;gap:3px;align-self:flex-end"><button class="btn sm" data-rstep="-1">−1°</button><button class="btn sm" data-rstep="-0.1">−0.1</button><button class="btn sm" data-rstep="0.1">+0.1</button><button class="btn sm" data-rstep="1">+1°</button></div></div>
+        <input id="rotRange" type="range" min="-45" max="45" step="0.1">
+        <div class="g2"><button class="btn sm" id="btnRotTrue" data-tip="Rotates the sector so its edges run exactly north–south / east–west on the map (true north; compensates the UTM grid convergence)."><i class="i fa-solid fa-compass"></i>Align to map grid</button>
+          <button class="btn sm" id="btnRotUtm" data-tip="0° – the sector edges follow the UTM grid (default)."><i class="i fa-solid fa-border-all"></i>Align to UTM grid</button></div>
+        <div class="hint" id="rotInfo"></div>
+        <div class="hint">Or drag the orange handle above the sector. Ctrl = 5° steps.</div></div></div>
+    <div style="position:relative;display:flex"><button class="btn" id="btnGridMap" data-tip="Display a map grid"><i class="i fa-solid fa-table-cells" style="color:#38bdf8"></i><span class="lbl">Map grid</span></button>
+      <div class="glass mpop" id="gridPop">
+        <div class="seg" id="gridSeg"><button data-g="off">Off</button><button data-g="utm">UTM</button><button data-g="latlon">Lat / lon</button><button data-g="sector">Sector</button></div>
+        <div class="row"><label class="field" style="flex:1" data-tip="Line spacing for the UTM and sector grid. Auto adapts to the zoom or sector size."><span>Spacing</span><select id="gridStep"><option value="">Auto</option><option value="10">10 m</option><option value="50">50 m</option><option value="100">100 m</option><option value="250">250 m</option><option value="500">500 m</option><option value="1000">1 km</option><option value="2000">2 km</option><option value="5000">5 km</option><option value="10000">10 km</option></select></label>
+          <label class="sw" style="flex:0 0 auto;align-self:flex-end;padding-bottom:6px"><input id="gridLabels" type="checkbox">Labels</label></div>
+        <div class="hint">UTM = metric grid of the export CRS · Lat / lon = geographic graticule · Sector = game grid from the SW corner (0,0), follows rotation.</div></div></div>
     <button class="btn" id="btnCenterView" data-tip="Move the sector to the centre of the current map view. Width, height and cell size stay the same."><i class="i fa-solid fa-crosshairs" style="color:#38bdf8"></i><span class="lbl">Centre sector in view</span></button>
   </div>
   <div class="mapui" id="mapBL">
@@ -946,8 +970,10 @@ function utmWkt(zone, north) {
 }
 function utmEpsg(zone, north) { return (north ? 32600 : 32700) + zone; }
 
+/* A sector is a rectangle in its own metric frame. rot = clockwise rotation (degrees) of the frame against UTM grid north,
+   around the pivot (pe, pn). With rot = 0 frame coordinates are plain UTM coordinates. */
 class Sector {
-  constructor(centerLat, centerLon, widthM, heightM) {
+  constructor(centerLat, centerLon, widthM, heightM, rot = 0) {
     this.zone = utmZoneFor(centerLon);
     this.north = centerLat >= 0;
     const [ec, nc] = utmForward(centerLat, centerLon, this.zone, this.north);
@@ -955,15 +981,20 @@ class Sector {
     this.E0 = Math.round(ec - widthM / 2);
     this.N0 = Math.round(nc - heightM / 2);
     this.epsg = utmEpsg(this.zone, this.north);
+    this._setRot(rot, ec, nc);
   }
-  static fromOrigin(zone, north, E0, N0, W, H) {
+  _setRot(rot, pe, pn) { this.rot = +rot || 0; this.pe = pe; this.pn = pn; const t = -this.rot * D2R; this.rc = Math.cos(t); this.rs = Math.sin(t); }
+  static fromOrigin(zone, north, E0, N0, W, H, rot = 0, pe = 0, pn = 0) {
     const s = Object.create(Sector.prototype);
     Object.assign(s, { zone, north, E0, N0, W, H, epsg: utmEpsg(zone, north) });
+    s._setRot(rot, pe, pn);
     return s;
   }
-  expanded(m) { return Sector.fromOrigin(this.zone, this.north, this.E0 - m, this.N0 - m, this.W + 2 * m, this.H + 2 * m); }
-  toLatLon(e, n) { return utmInverse(e, n, this.zone, this.north); }
-  toUtm(lat, lon) { return utmForward(lat, lon, this.zone, this.north); }
+  expanded(m) { return Sector.fromOrigin(this.zone, this.north, this.E0 - m, this.N0 - m, this.W + 2 * m, this.H + 2 * m, this.rot, this.pe, this.pn); }
+  frameToUtm(e, n) { if (!this.rot) return [e, n]; const dx = e - this.pe, dy = n - this.pn; return [this.pe + this.rc * dx - this.rs * dy, this.pn + this.rs * dx + this.rc * dy]; }
+  utmToFrame(e, n) { if (!this.rot) return [e, n]; const dx = e - this.pe, dy = n - this.pn; return [this.pe + this.rc * dx + this.rs * dy, this.pn - this.rs * dx + this.rc * dy]; }
+  toLatLon(e, n) { const [x, y] = this.frameToUtm(e, n); return utmInverse(x, y, this.zone, this.north); }
+  toUtm(lat, lon) { const [e, n] = utmForward(lat, lon, this.zone, this.north); return this.utmToFrame(e, n); }
   cornersLatLon() {
     return [[this.E0, this.N0 + this.H], [this.E0 + this.W, this.N0 + this.H], [this.E0 + this.W, this.N0], [this.E0, this.N0]]
       .map(([e, n]) => this.toLatLon(e, n));
@@ -977,8 +1008,8 @@ class Sector {
   }
   wkt() { return utmWkt(this.zone, this.north); }
   worldFile(w, h) {
-    const rx = this.W / w, ry = this.H / h;
-    return [rx, 0, 0, -ry, this.E0 + rx / 2, this.N0 + this.H - ry / 2].map(v => v.toFixed(6)).join('\n') + '\n';
+    const rx = this.W / w, ry = this.H / h, c = this.rc, sn = this.rs, [C, F] = this.frameToUtm(this.E0 + rx / 2, this.N0 + this.H - ry / 2);
+    return [c * rx, sn * rx, sn * ry, -c * ry, C, F].map(v => v.toFixed(8)).join('\n') + '\n';   // A D B E C F – rotation terms are 0 for an unrotated sector
   }
 }
 
@@ -1024,7 +1055,9 @@ function encodeGeoTiffF32(grid, w, h, sector) {
   const tags = [
     [256, 4, 1, w], [257, 4, 1, h], [258, 3, 1, 32], [259, 3, 1, 1], [262, 3, 1, 1],
     [273, 4, 1, 'DATA'], [277, 3, 1, 1], [278, 4, 1, h], [279, 4, 1, w * h * 4], [284, 3, 1, 1], [339, 3, 1, 3],
-    [33550, 12, 3, [res, res, 0]], [33922, 12, 6, [0, 0, 0, sector.E0, sector.N0 + sector.H, 0]],
+    ...(sector.rot ? (() => { const c = sector.rc, sn = sector.rs, [d, hh] = sector.frameToUtm(sector.E0, sector.N0 + sector.H);
+      return [[34264, 12, 16, [c * res, sn * res, 0, d, sn * res, -c * res, 0, hh, 0, 0, 0, 0, 0, 0, 0, 1]]]; })()
+      : [[33550, 12, 3, [res, res, 0]], [33922, 12, 6, [0, 0, 0, sector.E0, sector.N0 + sector.H, 0]]]),
     [34735, 3, geoKeys.length, geoKeys]
   ];
   let extraOff = 8 + 2 + tags.length * 12 + 4;
@@ -1324,7 +1357,8 @@ async function wmsCapabilities(url) {
 async function renderFromWms(sector, w, h, cfg, onProgress) {
   const { url, layer, version, crs } = cfg, v13 = version.startsWith('1.3');
   let code;
-  if (crs.has('EPSG:' + sector.epsg)) code = 'EPSG:' + sector.epsg;
+  if (sector.rot) code = 'EPSG:4326';   // rotated frame: resample from lat/lon
+  else if (crs.has('EPSG:' + sector.epsg)) code = 'EPSG:' + sector.epsg;
   else if (sector.north && crs.has('EPSG:' + (25800 + sector.zone))) code = 'EPSG:' + (25800 + sector.zone);
   else code = 'EPSG:4326';
   const out = new Uint8ClampedArray(w * h * 4), CH = 2048, sep = url.includes('?') ? '&' : '?';
@@ -1362,7 +1396,8 @@ async function renderFromWms(sector, w, h, cfg, onProgress) {
 async function renderDemFromWms(sector, w, h, cfg, onProgress) {
   const { url, layer, version, crs, fmt } = cfg, v13 = version.startsWith('1.3');
   let code;
-  if (crs.has('EPSG:' + sector.epsg)) code = 'EPSG:' + sector.epsg;
+  if (sector.rot) code = 'EPSG:4326';   // rotated frame: resample from lat/lon
+  else if (crs.has('EPSG:' + sector.epsg)) code = 'EPSG:' + sector.epsg;
   else if (sector.north && crs.has('EPSG:' + (25800 + sector.zone))) code = 'EPSG:' + (25800 + sector.zone);
   else code = 'EPSG:4326';
   const out = new Float32Array(w * h).fill(NaN), CH = 2048, sep = url.includes('?') ? '&' : '?';
@@ -1633,7 +1668,8 @@ function osmToFeatures(json) {
   return feats;
 }
 function featUtm(f, sector) {
-  if (f._utmZone !== sector.zone) { f._utm = f.rings.map(r => r.map(p => sector.toUtm(p[0], p[1]))); f._utmZone = sector.zone; }
+  const key = sector.rot ? `${sector.zone}|${sector.rot}|${sector.pe.toFixed(2)}|${sector.pn.toFixed(2)}` : sector.zone;
+  if (f._utmZone !== key) { f._utm = f.rings.map(r => r.map(p => sector.toUtm(p[0], p[1]))); f._utmZone = key; }
   return f._utm;
 }
 function lineWidthM(f) { const o = typeof S !== 'undefined' && S.lineW && +S.lineW[f.sub]; return o > 0 ? o : (f.widthM || SUBS[f.sub].w || 4); }
@@ -1973,7 +2009,7 @@ function coastFeats() { return typeof R !== 'undefined' ? R.osm.filter(f => f.su
 function seaMaskFor(sector, w, h) {
   if (typeof S === 'undefined' || !S.coastOn || !S.subActive.water_sea) return null;
   const cf = coastFeats(); if (!cf.length) return null;
-  const key = `${sector.E0},${sector.N0},${sector.W},${sector.H}|${w}x${h}|${R.scannedFor}`;
+  const key = `${sector.E0},${sector.N0},${sector.W},${sector.H},${sector.rot}|${w}x${h}|${R.scannedFor}`;
   if (SEA_CACHE.has(key)) return SEA_CACHE.get(key);
   const m = computeSeaMask(sector, w, h, cf);
   if (SEA_CACHE.size > 6) SEA_CACHE.delete(SEA_CACHE.keys().next().value);
@@ -2038,7 +2074,7 @@ function maskAll() { return allFeats().concat(corridorFeats()); }
 function rng32(seed) { let a = (seed >>> 0) || 1; return () => { a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 // ---------- v0.9: slope / cliff auto-mask ----------
 const ROCK = { key: '', mask: null, frac: 0 };
-function rockKeyFor(sector, w, h) { return `${sector.E0},${sector.N0},${sector.W},${sector.H}|${w}x${h}|${S.rockDeg}|${S.demSource}|${R.dem ? R.dem.name : ''}`; }
+function rockKeyFor(sector, w, h) { return `${sector.E0},${sector.N0},${sector.W},${sector.H},${sector.rot}|${w}x${h}|${S.rockDeg}|${S.demSource}|${R.dem ? R.dem.name : ''}`; }
 function rockMaskFor(sector, w, h) {
   if (typeof S === 'undefined' || !S.rockOn || !S.subActive.nat_cliff) return null;
   return ROCK.key === rockKeyFor(sector, w, h) ? ROCK.mask : null;
@@ -2092,6 +2128,8 @@ const HELP = [
     { el: 'btnVertsMap', name: 'Edit vertices', text: 'Click a shape, drag a vertex to move it, click + to add one. Click a vertex to select it (red) and press Del to remove it; right-click also removes. Esc deselects, Done ends.' },
     { el: 'btnDelMap', name: 'Delete shapefile', text: 'Delete mode (red): every shape you click is deleted – OpenStreetMap or custom. Esc or the button ends it. Undo (Ctrl+Z) brings shapes back.' },
     { el: 'btnShowMap', name: 'Show / hide shapefiles', text: 'Hides or shows all shapefiles on the map. Hidden shapes are still exported.' },
+    { el: 'btnRotMap', name: 'Rotate sector', text: 'Tilts the sector against the UTM grid: type an angle (clockwise, degrees), use the slider or the ±0.1° / ±1° steps, or drag the orange handle above the sector on the map (Ctrl = 5° steps). “Align to map grid” turns the sector so its edges run exactly north–south / east–west on the map – UTM grid north differs from true north by the grid convergence (shown in the panel). “Align to UTM grid” sets 0°. Every export follows the rotated sector: heightmap, imagery and masks are resampled into the rotated grid, shapefiles in terrain metres follow its axes, GeoTIFF and world files carry the rotation; .asc cannot store it.' },
+    { el: 'btnGridMap', name: 'Map grid', text: 'Shows a grid over the map: UTM (metric grid of the export CRS, every 10th line bold), Lat / lon (geographic graticule) or Sector (game grid from the south-west corner = 0,0, rotates with the sector). Spacing Auto adapts to zoom or sector size; labels can be switched off. The grid is display only.' },
     { el: 'btnCenterView', name: 'Centre sector in view', text: 'Moves the sector to the centre of the current map view. Width, height, cell size and engine profile stay the same. Pan or zoom the map to the place you want, then click. Scanned shapefiles are refreshed as for any other sector move; Undo does not apply – use Locations or History to go back.' },
     { el: 'btnOv', name: 'Background map & custom WMS', text: 'Choose the background map. Below the list you can add any WMS – e.g. an official orthophoto, topographic or cadastral map – to find and place the sector: enter the URL, “Check layers”, pick a layer. It is drawn on top of the background; the opacity slider blends it (100 % covers the background). “Use for satellite export” copies URL and layer to section 3. The server must offer EPSG:3857; some servers block browser access (CORS). URL, layer and opacity are saved with the session.' },
     { el: 'btnExpandAll', name: 'Expand / collapse all', text: 'Opens or closes every section at once.' }
@@ -2223,7 +2261,7 @@ const DEFAULTS = { satRes: 1, maskRes: 1, feather: 2, maskBg: '#2d4c1e', hmForma
 
 const S = {
   name: 'Lemnos', lat: 39.9167, lon: 25.2333, widthM: 4096, heightM: 4096, lockSquare: true,
-  cardAdv: {}, ovWms: { url: '', layer: '', on: false, op: 1 }, showShapes: true, showCustom: true, vecScope: 'active', morphScope: 'all', scenOn: true, dzType: 'explosion', dzLineType: 'crack', hmExag: 1, tplId: 'circle', tplSize: 200, tplRot: 0, tplCount: 30,
+  rot: 0, gridMode: 'off', gridStep: '', gridLabels: true, cardAdv: {}, ovWms: { url: '', layer: '', on: false, op: 1 }, showShapes: true, showCustom: true, vecScope: 'active', morphScope: 'all', scenOn: true, dzType: 'explosion', dzLineType: 'crack', hmExag: 1, tplId: 'circle', tplSize: 200, tplRot: 0, tplCount: 30,
   profile: 'custom', enginePx: '', hmRes: 1, demSource: 'terrarium', demCrs: 'auto', smoothPasses: 1, hmFormats: ['asc', 'png', 'tif'],
   satSource: 's2', xyzUrl: '', xyzMaxZ: 19, wmsUrl: '', wmsLayer: '', satRes: 1, satFmt: 'png',
   vecFmt: 'both', coordMode: 'local', rescanMode: 'auto',
@@ -2250,8 +2288,8 @@ function paintIcons() { }
 function toast(msg, ms = 3400) { const t = $('toast'); t.innerHTML = '<i class="i fa-solid fa-circle-info"></i><span></span>'; t.lastChild.textContent = msg; t.style.display = 'flex'; clearTimeout(t._h); t._h = setTimeout(() => t.style.display = 'none', ms); }
 function fmtAge(t) { const m = (Date.now() - t) / 60000; return m < 60 ? Math.max(1, Math.round(m)) + ' min' : m < 2880 ? Math.round(m / 60) + ' h' : Math.round(m / 1440) + ' days'; }
 function cleanName() { return 'GTG_' + (S.name || 'map').replace(/[^\w\-]+/g, '_').replace(/^GTG_/i, ''); }
-function sector() { return new Sector(S.lat, S.lon, S.widthM, S.heightM); }
-function sectorKey() { const s = sector(); return `${s.E0},${s.N0},${s.W},${s.H}`; }
+function sector() { return new Sector(S.lat, S.lon, S.widthM, S.heightM, S.rot || 0); }
+function sectorKey() { const s = sector(); return `${s.E0},${s.N0},${s.W},${s.H},${s.rot}`; }
 function prof() { return PROFILES[S.profile] || PROFILES.custom; }
 function hmSector() { const s = sector(); return S.profile !== 'custom' && prof().vertex ? s.expanded(S.hmRes / 2) : s; }
 function dims(res) {
@@ -2828,6 +2866,11 @@ function validate() {
   if (S.rockOn && S.hmRes > 10) add('s44', 'info', 'Slopes from a coarse heightmap are flattened – steep cliffs may be missed.');
   if (S.rgbaOn && new Set([S.rgbaR, S.rgbaG, S.rgbaB, S.rgbaA]).size < 4) add('s44', 'warn', 'The RGBA splatmap uses the same layer in more than one channel.');
   if (S.rgbaOn && [S.rgbaR, S.rgbaG, S.rgbaB, S.rgbaA].includes('cliff') && !S.rockOn) add('s44', 'warn', 'A channel uses cliffs, but the slope / cliff mask is off – that channel stays empty.', { label: 'Turn on', fn: () => { S.rockOn = true; } });
+  if (S.rot) {
+      add('s1', 'info', `Sector rotated ${fmtRot(S.rot)} against the UTM grid. Exports follow the rotated sector; GeoTIFF, world files and shapefiles carry the rotation.`, { label: 'Reset to 0°', fn: () => { S.rot = 0; } });
+      if (S.hmFormats.includes('asc')) add('s2', 'info', '.asc cannot store a rotated grid – its GIS position is the unrotated box. Engines read it correctly; for GIS use the GeoTIFF.');
+      if (S.satSource === 'wms' || S.demSource === 'wms') add('s1', 'info', 'Rotated sector: WMS data is requested in lat/lon and resampled into the rotated grid.');
+    }
   // v1.1
   if (S.morphScope === 'sel' && !selCount()) add('s43', 'warn', '“Selected only” is on, but no shape is selected – the morph changes nothing. Ctrl+click shapes on the map or tick ☐ in the lists.', { label: 'All shapes', fn: () => { S.morphScope = 'all'; updSel(); } });
   if (S.morphScope === 'sel' && selCount()) add('s43', 'info', `Morphing uses only the ${selCount()} selected shapes.`);
@@ -2966,12 +3009,12 @@ function updateEstimates() {
 }
 
 // ---------- locations ----------
-function locNow(name) { return { name: name || S.name, lat: S.lat, lon: S.lon, W: S.widthM, H: S.heightM, hmRes: S.hmRes, profile: S.profile, grid: S.enginePx, t: Date.now() }; }
-function locKey(l) { return `${l.lat.toFixed(5)},${l.lon.toFixed(5)},${l.W},${l.H}`; }
+function locNow(name) { return { name: name || S.name, lat: S.lat, lon: S.lon, W: S.widthM, H: S.heightM, rot: S.rot || 0, hmRes: S.hmRes, profile: S.profile, grid: S.enginePx, t: Date.now() }; }
+function locKey(l) { return `${l.lat.toFixed(5)},${l.lon.toFixed(5)},${l.W},${l.H},${l.rot || 0}`; }
 function addRecent() { const r = LS.get('gtg_recent', []).filter(x => locKey(x) !== locKey(locNow())); r.unshift(locNow()); LS.set('gtg_recent', r.slice(0, 10)); renderLocations(); }
 function addBookmark(name) { const b = LS.get('gtg_bookmarks', []); b.unshift(locNow(name)); LS.set('gtg_bookmarks', b.slice(0, 50)); renderLocations(); toast('Bookmark saved: ' + (name || S.name)); }
 function loadLocation(l) {
-  Object.assign(S, { name: l.name, lat: l.lat, lon: l.lon, widthM: l.W, heightM: l.H, hmRes: l.hmRes || S.hmRes });
+  Object.assign(S, { name: l.name, lat: l.lat, lon: l.lon, widthM: l.W, heightM: l.H, hmRes: l.hmRes || S.hmRes, rot: l.rot || 0 });
   S.profile = l.profile || 'custom'; S.enginePx = l.grid || '';
   fillGridSelect(); syncInputs(); drawSector(); map.fitBounds(sectorPoly.getBounds(), { padding: [40, 40] }); sectorChanged();
   $('locPop').classList.remove('show'); toast('Loaded ' + l.name);
@@ -3065,7 +3108,7 @@ async function buildHeight(w, h, prog = progress, o = {}) {
   const s = o.sector || hmSector(), sm = o.smoothPasses ?? S.smoothPasses, src = o.demSource || S.demSource, sea = S.seaClamp ? S.seaMin : null;
     const wmsKey = src === 'wms' ? [S.demWmsUrl, S.demWmsLayer, S.demWmsFmt, S.demWmsMin, S.demWmsMax].join(',') : '';
     const coastKey = S.coastOn && coastFeats().length ? [S.seaLevel, S.seaDepth, S.seaShelf, S.coastRaise, R.scannedFor].join(',') : '';
-  return cached(`h|${s.E0},${s.N0},${s.W},${s.H}|${w}x${h}|${src}|${wmsKey}|x${S.hmExag}|${sm}|${sea}|${coastKey}|${R.dem ? R.dem.name : ''}`, async () => {
+  return cached(`h|${s.E0},${s.N0},${s.W},${s.H},${s.rot}|${w}x${h}|${src}|${wmsKey}|x${S.hmExag}|${sm}|${sea}|${coastKey}|${R.dem ? R.dem.name : ''}`, async () => {
     let grid;
     const fromTiles = async (a, b) => { const z = pickZoom(s, s.W / w, 15); prog(a, `Elevation tiles z${z.z} (${z.tiles} tiles)…`); return renderFromTiles(s, w, h, TILE_SOURCES.terrarium.url, z.z, 'terrarium', f => prog(a + (b - a) * f, 'Sampling elevation…')); };
     if (src === 'local' && R.dem) {
@@ -3476,7 +3519,7 @@ function infoText(extra = {}) {
   const s = sector(), hd = hmDims(), p = prof();
   const L = [`ZeroG's GIS TO GAME (GTG) CONVERTER v${VERSION} – export info`, `Map: ${S.name}`, `Created: ${new Date().toISOString()}`];
   if (extra.title) L.push(`Content: ${extra.title}`);
-  L.push('', `CRS: WGS84 / UTM zone ${s.zone}${s.north ? 'N' : 'S'} (EPSG:${s.epsg})`, `Sector SW corner (game origin 0,0): E ${s.E0}  N ${s.N0}`, `Sector size: ${s.W} m x ${s.H} m`, `Centre: ${S.lat}, ${S.lon}`,
+  L.push('', `CRS: WGS84 / UTM zone ${s.zone}${s.north ? 'N' : 'S'} (EPSG:${s.epsg})`, `Sector SW corner (game origin 0,0): ${s.rot ? (([e, n]) => `E ${e.toFixed(2)}  N ${n.toFixed(2)}`)(s.frameToUtm(s.E0, s.N0)) : `E ${s.E0}  N ${s.N0}`}`, ...(s.rot ? [`Sector rotation: ${s.rot.toFixed(2)}° clockwise from UTM grid north – terrain X/Y axes follow the rotated sector; GeoTIFF and world files carry the rotation, .asc does not.`] : []), `Sector size: ${s.W} m x ${s.H} m`, `Centre: ${S.lat}, ${S.lon}`,
     `Engine profile: ${p.label}`, `Heightmap grid: ${hd.w} x ${hd.h} samples, spacing ${hd.res.toFixed(4)} m` + (S.profile !== 'custom' && p.vertex ? ' (samples sit exactly on the sector edges)' : ''), '');
   if (extra.min !== undefined) {
     const range = extra.max - extra.min;
@@ -3601,7 +3644,7 @@ function addVectorFiles(zip, folder, base, feats, fmt = S.vecFmt, coord = S.coor
     if (featUtm(f, s).some(r => r.some(([e, n]) => e - s.E0 < EDGE_EPS || n - s.N0 < EDGE_EPS || e - s.E0 > s.W - EDGE_EPS || n - s.N0 > s.H - EDGE_EPS))) cut++;
     (bySub[f.sub] = bySub[f.sub] || []).push({ f, g });
   }
-  const toOut = ([x, z]) => local ? [+x.toFixed(3), +z.toFixed(3)] : [+(x + s.E0).toFixed(3), +(z + s.N0).toFixed(3)];
+  const toOut = ([x, z]) => { if (local) return [+x.toFixed(3), +z.toFixed(3)]; const [e, n] = s.frameToUtm(x + s.E0, z + s.N0); return [+e.toFixed(3), +n.toFixed(3)]; };
   const toLL = ([x, z]) => { const [la, lo] = s.toLatLon(x + s.E0, z + s.N0); return [+lo.toFixed(7), +la.toFixed(7)]; };
   for (const [sb, list] of Object.entries(bySub)) {
     if (fmt !== 'geojson') {
@@ -3734,7 +3777,7 @@ function paramsJson(withInfo) {
     if (S.rgbaOn) o.importInfo.push(`RGBA splatmap channels: R=${S.rgbaR}, G=${S.rgbaG}, B=${S.rgbaB}, A=${S.rgbaA}${S.rockOn ? ` (cliff = slope ≥ ${S.rockDeg}°)` : ''}`);
     if (R.lastBlock) o.importInfo.push('Enfusion block check: ' + R.lastBlock);
     if (!e) o.importInfo.push('Elevation range and engine scale values appear here after a heightmap export.');
-    o.sector = { utmZone: `${s.zone}${s.north ? 'N' : 'S'}`, epsg: s.epsg, swEasting: s.E0, swNorthing: s.N0, widthM: s.W, heightM: s.H,
+    o.sector = { utmZone: `${s.zone}${s.north ? 'N' : 'S'}`, epsg: s.epsg, rotationDegClockwise: s.rot, swEasting: +s.frameToUtm(s.E0, s.N0)[0].toFixed(3), swNorthing: +s.frameToUtm(s.E0, s.N0)[1].toFixed(3), widthM: s.W, heightM: s.H,
       corners: Object.fromEntries(['NW', 'NE', 'SE', 'SW'].map((k, i) => { const c = s.cornersLatLon()[i]; return [k, [+c[0].toFixed(6), +c[1].toFixed(6)]]; })) };
   }
   return JSON.stringify(o, null, 2);
@@ -3875,7 +3918,7 @@ function updateInfo() {
   $('chip-s3').textContent = `${sd.w}² · ${sd.res.toFixed(2)} m`;
   $('chip-s4').textContent = R.osm.length ? `${allFeats().length} active` : 'not scanned';
   $('hud').innerHTML = [['Sector dimensions', `${S.widthM} m × ${S.heightM} m · ${km2.toFixed(2)} km²`, '#6ee7b7'], ['Grid resolution', `${hd.w} × ${hd.h} px (${hd.res.toFixed(2)} m/px)`, '#7dd3fc'],
-    ['Center coordinates', `${S.lat.toFixed(4)}, ${S.lon.toFixed(4)}`, 'var(--tx)'], ['CRS / profile', `UTM ${s.zone}${s.north ? 'N' : 'S'} · ${S.profile !== 'custom' ? prof().label : 'Custom'}`, '#fcd34d'], ['Lowest / highest altitude', elevText(), '#fda4af']]
+    ['Center coordinates', `${S.lat.toFixed(4)}, ${S.lon.toFixed(4)}`, 'var(--tx)'], ['CRS / profile', `UTM ${s.zone}${s.north ? 'N' : 'S'}${s.rot ? ` · rot ${fmtRot(s.rot)}` : ''} · ${S.profile !== 'custom' ? prof().label : 'Custom'}`, '#fcd34d'], ['Lowest / highest altitude', elevText(), '#fda4af']]
     .map(([k, v, c]) => `<div><div class="k">${k}</div><div class="v" style="color:${c}">${esc(v)}</div></div>`).join('');
 }
 let _secTimer = null;
@@ -3974,7 +4017,7 @@ function fitSectorToDem(dem) {
   const E0 = Math.max(c[0][0], c[2][0]), E1 = Math.min(c[1][0], c[3][0]), N0 = Math.max(c[0][1], c[1][1]), N1 = Math.min(c[2][1], c[3][1]);
   if (!(E1 - E0 > 130 && N1 - N0 > 130)) return false;
   const [cla, clo] = utmInverse((E0 + E1) / 2, (N0 + N1) / 2, zone, north);
-  S.lat = +cla.toFixed(6); S.lon = +clo.toFixed(6);
+  S.lat = +cla.toFixed(6); S.lon = +clo.toFixed(6); S.rot = 0;
   const W = Math.floor(E1 - E0 - 4), H = Math.floor(N1 - N0 - 4);
   if (S.profile !== 'custom') { const N = +S.enginePx, cells = prof().vertex ? N - 1 : N; setHmRes(Math.min(W, H) / cells); }
   else { S.lockSquare = false; S.widthM = Math.min(65536, W); S.heightM = Math.min(65536, H); }
@@ -4082,7 +4125,7 @@ function centerSectorInView() {
 $('btnCenterView').onclick = centerSectorInView;
 
 // GeoJSON / KML import → custom shapes
-function toLL(c, mode) { const s = sector(); if (mode === 'local') return s.toLatLon(s.E0 + c[0], s.N0 + c[1]); if (mode === 'utm') return s.toLatLon(c[0], c[1]); return [c[1], c[0]]; }
+function toLL(c, mode) { const s = sector(); if (mode === 'local') return s.toLatLon(s.E0 + c[0], s.N0 + c[1]); if (mode === 'utm') return utmInverse(c[0], c[1], s.zone, s.north); return [c[1], c[0]]; }
 function guessMode(coords, gj) {
   if (gj && /local terrain/i.test(gj.crs_note || '')) return 'local';
   const xs = coords.map(c => Math.abs(c[0])), ys = coords.map(c => Math.abs(c[1]));
@@ -4330,7 +4373,7 @@ const I18N_TR = {"de": ["„Fragen“ zeigt eine Leiste mit einem Klick zum Neu-
 const LANGS = [['en', 'EN', 'English'], ['de', 'DE', 'Deutsch'], ['fr', 'FR', 'Français'], ['es', 'ES', 'Español'], ['it', 'IT', 'Italiano'], ['pl', 'PL', 'Polski'], ['da', 'DA', 'Dansk'], ['sv', 'SV', 'Svenska'], ['no', 'NO', 'Norsk'], ['cs', 'CS', 'Čeština'], ['uk', 'UK', 'Українська'], ['ru', 'RU', 'Русский']];
 const I18N = { lang: 'en', exact: null, pats: null, tOrig: new WeakMap(), aOrig: new WeakMap(), busy: false };
 const normS = t => t.replace(/\s+/g, ' ').trim();
-const I18N_EXTRA = { de: [["Credits & licences", "Quellen & Lizenzen"], ["lat, lon (Enter)", "Breite, Länge (Enter)"], ["Place not found", "Ort nicht gefunden"], ["Only special zones so far – they are listed in 4.2b.", "Bisher nur Sonderzonen – sie stehen in 4.2b."], ["Lowest / highest altitude", "Tiefste / höchste Höhe"], ["measuring…", "wird gemessen…"], ["4.2b Draw & declare special zones", "4.2b Sonderzonen zeichnen & festlegen"], ["Apply special zones", "Sonderzonen anwenden"], ["Type for new zones", "Typ für neue Zonen"], ["Line zones", "Linienzonen"], ["Polygon zone", "Polygon-Zone"], ["Rectangle zone", "Rechteck-Zone"], ["Crack line", "Risslinie"], ["Special zone created: {0}", "Sonderzone erstellt: {0}"], ["Resolution", "Auflösung"], ["Cell size (m)", "Zellgröße (m)"], ["Width (px)", "Breite (px)"], ["Height (px)", "Höhe (px)"], ["Height exaggeration", "Höhenüberhöhung"], ["Metres per heightmap sample (0.25–8 m). Changes the pixel size below; the sector stays.", "Meter pro Höhenkarten-Abtastpunkt (0,25–8 m). Ändert die Pixelgröße; der Sektor bleibt."], ["Heightmap width in pixels. Linked to the sector size from section 1 – entering a value changes the cell size.", "Höhenkartenbreite in Pixeln. Verknüpft mit der Sektorgröße aus Abschnitt 1 – eine Eingabe ändert die Zellgröße."], ["Heightmap height in pixels. Linked to the sector size from section 1 – entering a value changes the cell size.", "Höhenkartenhöhe in Pixeln. Verknüpft mit der Sektorgröße aus Abschnitt 1 – eine Eingabe ändert die Zellgröße."], ["Image width in pixels. Linked to the sector size from section 1 – entering a value changes the resolution.", "Bildbreite in Pixeln. Verknüpft mit der Sektorgröße aus Abschnitt 1 – eine Eingabe ändert die Auflösung."], ["Image height in pixels. Linked to the sector size from section 1 – entering a value changes the resolution.", "Bildhöhe in Pixeln. Verknüpft mit der Sektorgröße aus Abschnitt 1 – eine Eingabe ändert die Auflösung."], ["Scales all heights relative to the lowest point. 1 = real heights. Applied to previews and every heightmap export.", "Skaliert alle Höhen relativ zum tiefsten Punkt. 1 = echte Höhen. Gilt für Vorschauen und jeden Höhenkarten-Export."], ["Special zone", "Sonderzone"], ["Special zones", "Sonderzonen"], ["4.2b Special zones", "4.2b Sonderzonen"], ["Special zone line (crack)", "Sonderzonen-Linie (Riss)"], ["Zone type", "Zonentyp"], ["Apply special zones", "Sonderzonen anwenden"], ["New zone", "Neue Zone"], ["All on", "Alle an"], ["All off", "Alle aus"], ["Apply this zone", "Diese Zone anwenden"], ["Zoom to zone", "Zur Zone zoomen"], ["Delete zone", "Zone löschen"], ["No special zones yet.", "Noch keine Sonderzonen."], ["Switch all zones on", "Alle Zonen einschalten"], ["Switch all zones off", "Alle Zonen ausschalten"], ["Switch 4.2 to the Special zone class and start drawing a polygon.", "4.2 auf die Klasse Sonderzone stellen und ein Polygon zeichnen."], ["Next shapes become special zones. Choose the zone type per zone in the list below or in 4.2b.", "Neue Formen werden Sonderzonen. Den Typ pro Zone in der Liste unten oder in 4.2b wählen."], ["Applies all active special zones from 4.2 to the morphed heightmap. Types and strengths per zone are set in 4.2b (Advanced) or in the 4.2 list.", "Wendet alle aktiven Sonderzonen aus 4.2 auf die gemorphte Höhenkarte an. Typ und Stärke pro Zone in 4.2b (Erweitert) oder in der Liste in 4.2."], ["Class of the next shape you draw or place. Choose “Special zone” to declare the area for a catastrophe scenario.", "Klasse der nächsten Form. „Sonderzone“ wählen, um die Fläche für ein Sonderszenario festzulegen."], ["Number of pieces for the Scatter template.", "Anzahl der Teile für die Vorlage Streuung."], ["Triangle", "Dreieck"], ["Hexagon", "Sechseck"], ["Star", "Stern"], ["Scatter", "Streuung"], ["Zigzag line", "Zickzacklinie"], ["Teardrop", "Tropfen"], ["Blob", "Fleck"], ["Circle", "Kreis"], ["Ring", "Ring"], ["Ellipse", "Ellipse"], ["Rectangle", "Rechteck"], ["Templates", "Vorlagen"], ["Size (m)", "Größe (m)"], ["Rotation (°)", "Drehung (°)"], ["Count", "Anzahl"], ["Place on map", "Auf Karte setzen"], ["needs a line class", "braucht eine Linienklasse"], ["(outline)", "(Umriss)"], ["Then click on the map to place the template there. Esc cancels.", "Danach auf die Karte klicken, um die Vorlage zu setzen. Esc bricht ab."], ["Overall size of the template in metres (diameter or length).", "Gesamtgröße der Vorlage in Metern (Durchmesser oder Länge)."], ["Rotation clockwise from north.", "Drehung im Uhrzeigersinn ab Nord."], ["Explosion", "Explosion"], ["Artillery field", "Artilleriefeld"], ["Meteor impact", "Meteoriteneinschlag"], ["Meteor shower", "Meteoritenschauer"], ["Landslide", "Erdrutsch"], ["Flood", "Flut"], ["Avalanche", "Lawine"], ["Sinkhole", "Erdfall"], ["Trench / Earth crack", "Graben / Erdspalte"], ["Line zone", "Linienzone"], ["Type for new line zones", "Typ für neue Linienzonen"], ["Bomb crater line", "Bombenkrater-Linie"], ["Earthworks / berm", "Erdwall / Berme"], ["Anti-tank ditch", "Panzergraben"], ["Riverbed / dry wadi", "Flussbett / Wadi"], ["Firing position / revetment", "Stellung / Deckungswall"], ["Dam / reservoir", "Damm / Stausee"], ["Open-pit mine / quarry", "Tagebau / Steinbruch"], ["Mound / spoil heap", "Hügel / Abraumhalde"], ["Subsidence field", "Senkungsfeld"], ["Dune field", "Dünenfeld"], ["Rockfall / boulder field", "Steinschlag / Blockfeld"], ["Terraced fields", "Terrassenfelder"], ["Berm height", "Wallhöhe"], ["Ditch depth", "Grabentiefe"], ["Channel depth", "Rinnentiefe"], ["Pad depth", "Grubentiefe"], ["Wall width", "Wallbreite"], ["Dam crest width", "Dammkronenbreite"], ["Pit depth", "Grubentiefe"], ["Bench width", "Bermenbreite"], ["Height", "Höhe"], ["Surface roughness", "Oberflächenrauheit"], ["Max sinking", "Max. Absenkung"], ["Undulation scale", "Wellenmaßstab"], ["Dune height", "Dünenhöhe"], ["Dune spacing", "Dünenabstand"], ["Boulder height", "Blockhöhe"], ["Mean boulder radius", "Mittlerer Blockradius"], ["Step height", "Stufenhöhe"], ["Riser share", "Böschungsanteil"], ["4.2b Draw & declare special zones", "4.2b Sonderzonen zeichnen & festlegen"], ["Volcano", "Vulkan"], ["Erosion", "Erosion"], ["Crater depth", "Kratertiefe"], ["Crater radius (0 = shape)", "Kraterradius (0 = Zone)"], ["Crater radius", "Kraterradius"], ["Mean crater radius", "Mittlerer Kraterradius"], ["Displacement", "Verlagerung"], ["Debris roughness", "Schutt-Rauheit"], ["Water level above lowest point", "Wasserstand über tiefstem Punkt"], ["Plain smoothing", "Ebenen-Glättung"], ["Depth", "Tiefe"], ["Radius (0 = shape)", "Radius (0 = Zone)"], ["Half width", "Halbe Breite"], ["Cone height", "Kegelhöhe"], ["Base radius (0 = shape)", "Basisradius (0 = Zone)"], ["Max cut", "Max. Abtrag"], ["Gully spacing", "Rinnenabstand"], ["Edge feather", "Kantenweichheit"], ["shape", "Zone"], ["New random layout", "Neue Zufallsanordnung"], ["Manual", "Handbuch"], ["Export scope", "Export-Umfang"], ["Active shapes only", "Nur aktive Formen"], ["All shapes", "Alle Formen"], ["Selected only", "Nur ausgewählte"], ["{0} selected", "{0} ausgewählt"], ["Clear selection", "Auswahl aufheben"], ["Export all shapefiles (.zip)", "Alle Shapefiles exportieren (.zip)"], ["Shapes", "Formen"], ["Select for 4.3 (selected only)", "Für 4.3 auswählen (nur ausgewählte)"], ["Include in export", "In Export aufnehmen"], ["Zoom to shape", "Zur Form zoomen"], ["Delete shape", "Form löschen"], ["Deleted: {0}", "Gelöscht: {0}"], ["Basic / Advanced for this section", "Einfach / Erweitert für diesen Abschnitt"], ["Advanced – all options of this section visible.", "Erweitert – alle Optionen dieses Abschnitts sichtbar."], ["Basic – essential options only. Hidden settings keep their values.", "Einfach – nur wichtige Optionen. Ausgeblendete Einstellungen behalten ihre Werte."], ["All shapefiles on / off", "Alle Shapefiles ein / aus"], ["Not scanned yet.", "Noch nicht gescannt."], ["Flatten areas", "Planierflächen"], ["Keyboard & mouse", "Tastatur & Maus"], ["Troubleshooting", "Fehlerbehebung"], ["No special zones yet. In 4.2 click “Special zone”, then draw or place a shape and choose its zone type.", "Noch keine Sonderzonen. In 4.2 „Sonderzone“ klicken, dann eine Form zeichnen oder setzen und den Zonentyp wählen."], ["{0} special zone(s) are ignored – “Apply special zones” is off.", "{0} Sonderzone(n) werden ignoriert – „Sonderzonen anwenden“ ist aus."], ["All special zones are switched off.", "Alle Sonderzonen sind ausgeschaltet."], ["Switch on", "Einschalten"], ["Special zone has no effect", "Sonderzone wirkt nicht"], ["Check that “Apply special zones” in 4.3 is on, the zone is ticked in 4.2b, and preview the morphed heightmap (4.3), not the plain one (2).", "Prüfen, ob „Sonderzonen anwenden“ in 4.3 an ist, die Zone in 4.2b angehakt ist, und die gemorphte Höhenkarte (4.3) ansehen, nicht die einfache (2)."], ["Class: Special zone – draw or place a template, then pick the zone type in the list.", "Klasse: Sonderzone – zeichnen oder Vorlage setzen, dann den Zonentyp in der Liste wählen."], ["Click on the map to place the template · Esc cancels", "Auf die Karte klicken, um die Vorlage zu setzen · Esc bricht ab"], ["“{0}” is a line – choose a line class (or Special zone) first.", "„{0}“ ist eine Linie – zuerst eine Linienklasse (oder Sonderzone) wählen."], ["Image pixels", "Bildpixel"], ["Cell size & heightmap pixels", "Zellgröße & Höhenkartenpixel"], ["Zones", "Zonen"], ["Per-zone settings", "Einstellungen pro Zone"], ["Basic / Advanced (B | A)", "Einfach / Erweitert (B | A)"], ["Morphing uses only the {0} selected shapes.", "Das Morphing nutzt nur die {0} ausgewählten Formen."], ["Print or save as PDF", "Drucken oder als PDF speichern"], ["Manual: every function explained with illustrations.", "Handbuch: alle Funktionen mit Abbildungen erklärt."], ["Messages", "Meldungen"], ["Click to go to the setting", "Klicken, um zur Einstellung zu springen"], ["No messages – all settings look good.", "Keine Meldungen – alle Einstellungen sind in Ordnung."], ["Setting checks. Click to show all messages.", "Einstellungsprüfung. Klicken zeigt alle Meldungen."], ["Draw shapefiles", "Shapefiles zeichnen"], ["Delete shapefile", "Shapefile löschen"], ["Hide shapefiles", "Shapefiles ausblenden"], ["Show shapefiles", "Shapefiles einblenden"], ["Draw a custom shapefile on the map", "Eigenes Shapefile auf der Karte zeichnen"], ["Rectangle", "Rechteck"], ["Show or hide all shapefiles on the map", "Alle Shapefiles auf der Karte ein- oder ausblenden"], ["Delete mode: click shapes on the map to delete them (Esc ends, Undo works)", "Löschmodus: Formen auf der Karte anklicken, um sie zu löschen (Esc beendet, Rückgängig funktioniert)"], ["Click to add points; finish on the first (polygon) or last (line) point. Esc stops.", "Klicken, um Punkte zu setzen; auf dem ersten (Polygon) bzw. letzten (Linie) Punkt beenden. Esc stoppt."], ["Show custom shapefiles on map", "Eigene Shapefiles auf der Karte zeigen"], ["Show or hide your custom shapes on the map. Hidden shapes are still exported.", "Eigene Formen auf der Karte ein- oder ausblenden. Ausgeblendete Formen werden trotzdem exportiert."], ["Keep roads & terrain edits inside the zone", "Straßen & Geländeänderungen in der Zone erhalten"], ["Extra height ×", "Zusätzliche Höhe ×"], ["Include in export (untick to exclude)", "Im Export enthalten (abwählen zum Ausschließen)"], ["Use this shape for 4.3 morphing (Selected only)", "Diese Form für das Morphing in 4.3 verwenden (nur ausgewählte)"], ["Shapefiles shown", "Shapefiles eingeblendet"], ["Shapefiles hidden – they are still exported", "Shapefiles ausgeblendet – sie werden trotzdem exportiert"], ["Delete mode: click shapes to delete them · Esc ends", "Löschmodus: Formen anklicken, um sie zu löschen · Esc beendet"], ["Deleted: {0} · Ctrl+Z restores it", "Gelöscht: {0} · Strg+Z stellt wieder her"], ["Sector moved to the DEM area ({0} × {1} m)", "Sektor zum DGM-Gebiet verschoben ({0} × {1} m)"], ["Export morphed heightmap (.zip)", "Gemorphte Höhenkarte exportieren (.zip)"], ["Remove the selected vertex", "Ausgewählten Stützpunkt entfernen"], ["Keep the sector square", "Sektor quadratisch halten"], ["Class", "Klasse"], ["Polygon", "Polygon"], ["Line", "Linie"], ["On: roads, water cuts and flattened areas stay visible inside the zone (e.g. roads between bomb craters). Off: the event reshapes the original ground and wipes them (e.g. a volcano cone).", "An: Straßen, Wassereinschnitte und Planierflächen bleiben in der Zone erhalten (z. B. Straßen zwischen Bombenkratern). Aus: Das Ereignis formt den ursprünglichen Boden neu und löscht sie (z. B. Vulkankegel)."], ["Custom WMS", "Eigenes WMS"], ["Show on map", "Auf der Karte zeigen"], ["Opacity", "Deckkraft"], ["Use for satellite export (3)", "Für Satelliten-Export verwenden (3)"], ["Show the WMS on top of the background map.", "WMS über der Hintergrundkarte anzeigen."], ["Use this WMS and layer as imagery source for the satellite export (section 3).", "Dieses WMS und diese Ebene als Bildquelle für den Satelliten-Export (Abschnitt 3) verwenden."], ["Any WMS that offers EPSG:3857, e.g. an official orthophoto or cadastral map.", "Jedes WMS mit EPSG:3857, z. B. ein amtliches Orthofoto oder eine Katasterkarte."], ["Enter a WMS URL first", "Zuerst eine WMS-URL eingeben"], ["Section 3 now uses this WMS for the satellite export", "Abschnitt 3 nutzt jetzt dieses WMS für den Satelliten-Export"], ["Custom WMS: some tiles could not be loaded (server, layer or CORS).", "Eigenes WMS: Einige Kacheln konnten nicht geladen werden (Server, Ebene oder CORS)."], ["Background map & custom WMS", "Hintergrundkarte & eigenes WMS"], ["Loading capabilities…", "Capabilities werden geladen…"], ["Centre sector in view", "Sektor in Kartenmitte setzen"], ["Move the sector to the centre of the current map view. Width, height and cell size stay the same.", "Sektor in die Mitte der aktuellen Kartenansicht verschieben. Breite, Höhe und Zellgröße bleiben gleich."], ["Moves the sector to the centre of the current map view. Width, height, cell size and engine profile stay the same. Pan or zoom the map to the place you want, then click. Scanned shapefiles are refreshed as for any other sector move; Undo does not apply – use Locations or History to go back.", "Verschiebt den Sektor in die Mitte der aktuellen Kartenansicht. Breite, Höhe, Zellgröße und Engine-Profil bleiben gleich. Karte auf den gewünschten Ort schieben oder zoomen, dann klicken. Gescannte Shapefiles werden wie bei jeder Sektorverschiebung aktualisiert; Rückgängig greift nicht – zum Zurückgehen Orte oder Verlauf nutzen."], ["Sector centred in view: {0}, {1} · {2} × {3} m", "Sektor in Kartenmitte gesetzt: {0}, {1} · {2} × {3} m"], ["UTM is not defined beyond 84° N / 80° S. Move the map first.", "UTM ist jenseits von 84° N / 80° S nicht definiert. Zuerst die Karte verschieben."]] };
+const I18N_EXTRA = { de: [["Credits & licences", "Quellen & Lizenzen"], ["lat, lon (Enter)", "Breite, Länge (Enter)"], ["Place not found", "Ort nicht gefunden"], ["Only special zones so far – they are listed in 4.2b.", "Bisher nur Sonderzonen – sie stehen in 4.2b."], ["Lowest / highest altitude", "Tiefste / höchste Höhe"], ["measuring…", "wird gemessen…"], ["4.2b Draw & declare special zones", "4.2b Sonderzonen zeichnen & festlegen"], ["Apply special zones", "Sonderzonen anwenden"], ["Type for new zones", "Typ für neue Zonen"], ["Line zones", "Linienzonen"], ["Polygon zone", "Polygon-Zone"], ["Rectangle zone", "Rechteck-Zone"], ["Crack line", "Risslinie"], ["Special zone created: {0}", "Sonderzone erstellt: {0}"], ["Resolution", "Auflösung"], ["Cell size (m)", "Zellgröße (m)"], ["Width (px)", "Breite (px)"], ["Height (px)", "Höhe (px)"], ["Height exaggeration", "Höhenüberhöhung"], ["Metres per heightmap sample (0.25–8 m). Changes the pixel size below; the sector stays.", "Meter pro Höhenkarten-Abtastpunkt (0,25–8 m). Ändert die Pixelgröße; der Sektor bleibt."], ["Heightmap width in pixels. Linked to the sector size from section 1 – entering a value changes the cell size.", "Höhenkartenbreite in Pixeln. Verknüpft mit der Sektorgröße aus Abschnitt 1 – eine Eingabe ändert die Zellgröße."], ["Heightmap height in pixels. Linked to the sector size from section 1 – entering a value changes the cell size.", "Höhenkartenhöhe in Pixeln. Verknüpft mit der Sektorgröße aus Abschnitt 1 – eine Eingabe ändert die Zellgröße."], ["Image width in pixels. Linked to the sector size from section 1 – entering a value changes the resolution.", "Bildbreite in Pixeln. Verknüpft mit der Sektorgröße aus Abschnitt 1 – eine Eingabe ändert die Auflösung."], ["Image height in pixels. Linked to the sector size from section 1 – entering a value changes the resolution.", "Bildhöhe in Pixeln. Verknüpft mit der Sektorgröße aus Abschnitt 1 – eine Eingabe ändert die Auflösung."], ["Scales all heights relative to the lowest point. 1 = real heights. Applied to previews and every heightmap export.", "Skaliert alle Höhen relativ zum tiefsten Punkt. 1 = echte Höhen. Gilt für Vorschauen und jeden Höhenkarten-Export."], ["Special zone", "Sonderzone"], ["Special zones", "Sonderzonen"], ["4.2b Special zones", "4.2b Sonderzonen"], ["Special zone line (crack)", "Sonderzonen-Linie (Riss)"], ["Zone type", "Zonentyp"], ["Apply special zones", "Sonderzonen anwenden"], ["New zone", "Neue Zone"], ["All on", "Alle an"], ["All off", "Alle aus"], ["Apply this zone", "Diese Zone anwenden"], ["Zoom to zone", "Zur Zone zoomen"], ["Delete zone", "Zone löschen"], ["No special zones yet.", "Noch keine Sonderzonen."], ["Switch all zones on", "Alle Zonen einschalten"], ["Switch all zones off", "Alle Zonen ausschalten"], ["Switch 4.2 to the Special zone class and start drawing a polygon.", "4.2 auf die Klasse Sonderzone stellen und ein Polygon zeichnen."], ["Next shapes become special zones. Choose the zone type per zone in the list below or in 4.2b.", "Neue Formen werden Sonderzonen. Den Typ pro Zone in der Liste unten oder in 4.2b wählen."], ["Applies all active special zones from 4.2 to the morphed heightmap. Types and strengths per zone are set in 4.2b (Advanced) or in the 4.2 list.", "Wendet alle aktiven Sonderzonen aus 4.2 auf die gemorphte Höhenkarte an. Typ und Stärke pro Zone in 4.2b (Erweitert) oder in der Liste in 4.2."], ["Class of the next shape you draw or place. Choose “Special zone” to declare the area for a catastrophe scenario.", "Klasse der nächsten Form. „Sonderzone“ wählen, um die Fläche für ein Sonderszenario festzulegen."], ["Number of pieces for the Scatter template.", "Anzahl der Teile für die Vorlage Streuung."], ["Triangle", "Dreieck"], ["Hexagon", "Sechseck"], ["Star", "Stern"], ["Scatter", "Streuung"], ["Zigzag line", "Zickzacklinie"], ["Teardrop", "Tropfen"], ["Blob", "Fleck"], ["Circle", "Kreis"], ["Ring", "Ring"], ["Ellipse", "Ellipse"], ["Rectangle", "Rechteck"], ["Templates", "Vorlagen"], ["Size (m)", "Größe (m)"], ["Rotation (°)", "Drehung (°)"], ["Count", "Anzahl"], ["Place on map", "Auf Karte setzen"], ["needs a line class", "braucht eine Linienklasse"], ["(outline)", "(Umriss)"], ["Then click on the map to place the template there. Esc cancels.", "Danach auf die Karte klicken, um die Vorlage zu setzen. Esc bricht ab."], ["Overall size of the template in metres (diameter or length).", "Gesamtgröße der Vorlage in Metern (Durchmesser oder Länge)."], ["Rotation clockwise from north.", "Drehung im Uhrzeigersinn ab Nord."], ["Explosion", "Explosion"], ["Artillery field", "Artilleriefeld"], ["Meteor impact", "Meteoriteneinschlag"], ["Meteor shower", "Meteoritenschauer"], ["Landslide", "Erdrutsch"], ["Flood", "Flut"], ["Avalanche", "Lawine"], ["Sinkhole", "Erdfall"], ["Trench / Earth crack", "Graben / Erdspalte"], ["Line zone", "Linienzone"], ["Type for new line zones", "Typ für neue Linienzonen"], ["Bomb crater line", "Bombenkrater-Linie"], ["Earthworks / berm", "Erdwall / Berme"], ["Anti-tank ditch", "Panzergraben"], ["Riverbed / dry wadi", "Flussbett / Wadi"], ["Firing position / revetment", "Stellung / Deckungswall"], ["Dam / reservoir", "Damm / Stausee"], ["Open-pit mine / quarry", "Tagebau / Steinbruch"], ["Mound / spoil heap", "Hügel / Abraumhalde"], ["Subsidence field", "Senkungsfeld"], ["Dune field", "Dünenfeld"], ["Rockfall / boulder field", "Steinschlag / Blockfeld"], ["Terraced fields", "Terrassenfelder"], ["Berm height", "Wallhöhe"], ["Ditch depth", "Grabentiefe"], ["Channel depth", "Rinnentiefe"], ["Pad depth", "Grubentiefe"], ["Wall width", "Wallbreite"], ["Dam crest width", "Dammkronenbreite"], ["Pit depth", "Grubentiefe"], ["Bench width", "Bermenbreite"], ["Height", "Höhe"], ["Surface roughness", "Oberflächenrauheit"], ["Max sinking", "Max. Absenkung"], ["Undulation scale", "Wellenmaßstab"], ["Dune height", "Dünenhöhe"], ["Dune spacing", "Dünenabstand"], ["Boulder height", "Blockhöhe"], ["Mean boulder radius", "Mittlerer Blockradius"], ["Step height", "Stufenhöhe"], ["Riser share", "Böschungsanteil"], ["4.2b Draw & declare special zones", "4.2b Sonderzonen zeichnen & festlegen"], ["Volcano", "Vulkan"], ["Erosion", "Erosion"], ["Crater depth", "Kratertiefe"], ["Crater radius (0 = shape)", "Kraterradius (0 = Zone)"], ["Crater radius", "Kraterradius"], ["Mean crater radius", "Mittlerer Kraterradius"], ["Displacement", "Verlagerung"], ["Debris roughness", "Schutt-Rauheit"], ["Water level above lowest point", "Wasserstand über tiefstem Punkt"], ["Plain smoothing", "Ebenen-Glättung"], ["Depth", "Tiefe"], ["Radius (0 = shape)", "Radius (0 = Zone)"], ["Half width", "Halbe Breite"], ["Cone height", "Kegelhöhe"], ["Base radius (0 = shape)", "Basisradius (0 = Zone)"], ["Max cut", "Max. Abtrag"], ["Gully spacing", "Rinnenabstand"], ["Edge feather", "Kantenweichheit"], ["shape", "Zone"], ["New random layout", "Neue Zufallsanordnung"], ["Manual", "Handbuch"], ["Export scope", "Export-Umfang"], ["Active shapes only", "Nur aktive Formen"], ["All shapes", "Alle Formen"], ["Selected only", "Nur ausgewählte"], ["{0} selected", "{0} ausgewählt"], ["Clear selection", "Auswahl aufheben"], ["Export all shapefiles (.zip)", "Alle Shapefiles exportieren (.zip)"], ["Shapes", "Formen"], ["Select for 4.3 (selected only)", "Für 4.3 auswählen (nur ausgewählte)"], ["Include in export", "In Export aufnehmen"], ["Zoom to shape", "Zur Form zoomen"], ["Delete shape", "Form löschen"], ["Deleted: {0}", "Gelöscht: {0}"], ["Basic / Advanced for this section", "Einfach / Erweitert für diesen Abschnitt"], ["Advanced – all options of this section visible.", "Erweitert – alle Optionen dieses Abschnitts sichtbar."], ["Basic – essential options only. Hidden settings keep their values.", "Einfach – nur wichtige Optionen. Ausgeblendete Einstellungen behalten ihre Werte."], ["All shapefiles on / off", "Alle Shapefiles ein / aus"], ["Not scanned yet.", "Noch nicht gescannt."], ["Flatten areas", "Planierflächen"], ["Keyboard & mouse", "Tastatur & Maus"], ["Troubleshooting", "Fehlerbehebung"], ["No special zones yet. In 4.2 click “Special zone”, then draw or place a shape and choose its zone type.", "Noch keine Sonderzonen. In 4.2 „Sonderzone“ klicken, dann eine Form zeichnen oder setzen und den Zonentyp wählen."], ["{0} special zone(s) are ignored – “Apply special zones” is off.", "{0} Sonderzone(n) werden ignoriert – „Sonderzonen anwenden“ ist aus."], ["All special zones are switched off.", "Alle Sonderzonen sind ausgeschaltet."], ["Switch on", "Einschalten"], ["Special zone has no effect", "Sonderzone wirkt nicht"], ["Check that “Apply special zones” in 4.3 is on, the zone is ticked in 4.2b, and preview the morphed heightmap (4.3), not the plain one (2).", "Prüfen, ob „Sonderzonen anwenden“ in 4.3 an ist, die Zone in 4.2b angehakt ist, und die gemorphte Höhenkarte (4.3) ansehen, nicht die einfache (2)."], ["Class: Special zone – draw or place a template, then pick the zone type in the list.", "Klasse: Sonderzone – zeichnen oder Vorlage setzen, dann den Zonentyp in der Liste wählen."], ["Click on the map to place the template · Esc cancels", "Auf die Karte klicken, um die Vorlage zu setzen · Esc bricht ab"], ["“{0}” is a line – choose a line class (or Special zone) first.", "„{0}“ ist eine Linie – zuerst eine Linienklasse (oder Sonderzone) wählen."], ["Image pixels", "Bildpixel"], ["Cell size & heightmap pixels", "Zellgröße & Höhenkartenpixel"], ["Zones", "Zonen"], ["Per-zone settings", "Einstellungen pro Zone"], ["Basic / Advanced (B | A)", "Einfach / Erweitert (B | A)"], ["Morphing uses only the {0} selected shapes.", "Das Morphing nutzt nur die {0} ausgewählten Formen."], ["Print or save as PDF", "Drucken oder als PDF speichern"], ["Manual: every function explained with illustrations.", "Handbuch: alle Funktionen mit Abbildungen erklärt."], ["Messages", "Meldungen"], ["Click to go to the setting", "Klicken, um zur Einstellung zu springen"], ["No messages – all settings look good.", "Keine Meldungen – alle Einstellungen sind in Ordnung."], ["Setting checks. Click to show all messages.", "Einstellungsprüfung. Klicken zeigt alle Meldungen."], ["Draw shapefiles", "Shapefiles zeichnen"], ["Delete shapefile", "Shapefile löschen"], ["Hide shapefiles", "Shapefiles ausblenden"], ["Show shapefiles", "Shapefiles einblenden"], ["Draw a custom shapefile on the map", "Eigenes Shapefile auf der Karte zeichnen"], ["Rectangle", "Rechteck"], ["Show or hide all shapefiles on the map", "Alle Shapefiles auf der Karte ein- oder ausblenden"], ["Delete mode: click shapes on the map to delete them (Esc ends, Undo works)", "Löschmodus: Formen auf der Karte anklicken, um sie zu löschen (Esc beendet, Rückgängig funktioniert)"], ["Click to add points; finish on the first (polygon) or last (line) point. Esc stops.", "Klicken, um Punkte zu setzen; auf dem ersten (Polygon) bzw. letzten (Linie) Punkt beenden. Esc stoppt."], ["Show custom shapefiles on map", "Eigene Shapefiles auf der Karte zeigen"], ["Show or hide your custom shapes on the map. Hidden shapes are still exported.", "Eigene Formen auf der Karte ein- oder ausblenden. Ausgeblendete Formen werden trotzdem exportiert."], ["Keep roads & terrain edits inside the zone", "Straßen & Geländeänderungen in der Zone erhalten"], ["Extra height ×", "Zusätzliche Höhe ×"], ["Include in export (untick to exclude)", "Im Export enthalten (abwählen zum Ausschließen)"], ["Use this shape for 4.3 morphing (Selected only)", "Diese Form für das Morphing in 4.3 verwenden (nur ausgewählte)"], ["Shapefiles shown", "Shapefiles eingeblendet"], ["Shapefiles hidden – they are still exported", "Shapefiles ausgeblendet – sie werden trotzdem exportiert"], ["Delete mode: click shapes to delete them · Esc ends", "Löschmodus: Formen anklicken, um sie zu löschen · Esc beendet"], ["Deleted: {0} · Ctrl+Z restores it", "Gelöscht: {0} · Strg+Z stellt wieder her"], ["Sector moved to the DEM area ({0} × {1} m)", "Sektor zum DGM-Gebiet verschoben ({0} × {1} m)"], ["Export morphed heightmap (.zip)", "Gemorphte Höhenkarte exportieren (.zip)"], ["Remove the selected vertex", "Ausgewählten Stützpunkt entfernen"], ["Keep the sector square", "Sektor quadratisch halten"], ["Class", "Klasse"], ["Polygon", "Polygon"], ["Line", "Linie"], ["On: roads, water cuts and flattened areas stay visible inside the zone (e.g. roads between bomb craters). Off: the event reshapes the original ground and wipes them (e.g. a volcano cone).", "An: Straßen, Wassereinschnitte und Planierflächen bleiben in der Zone erhalten (z. B. Straßen zwischen Bombenkratern). Aus: Das Ereignis formt den ursprünglichen Boden neu und löscht sie (z. B. Vulkankegel)."], ["Custom WMS", "Eigenes WMS"], ["Show on map", "Auf der Karte zeigen"], ["Opacity", "Deckkraft"], ["Use for satellite export (3)", "Für Satelliten-Export verwenden (3)"], ["Show the WMS on top of the background map.", "WMS über der Hintergrundkarte anzeigen."], ["Use this WMS and layer as imagery source for the satellite export (section 3).", "Dieses WMS und diese Ebene als Bildquelle für den Satelliten-Export (Abschnitt 3) verwenden."], ["Any WMS that offers EPSG:3857, e.g. an official orthophoto or cadastral map.", "Jedes WMS mit EPSG:3857, z. B. ein amtliches Orthofoto oder eine Katasterkarte."], ["Enter a WMS URL first", "Zuerst eine WMS-URL eingeben"], ["Section 3 now uses this WMS for the satellite export", "Abschnitt 3 nutzt jetzt dieses WMS für den Satelliten-Export"], ["Custom WMS: some tiles could not be loaded (server, layer or CORS).", "Eigenes WMS: Einige Kacheln konnten nicht geladen werden (Server, Ebene oder CORS)."], ["Background map & custom WMS", "Hintergrundkarte & eigenes WMS"], ["Loading capabilities…", "Capabilities werden geladen…"], ["Centre sector in view", "Sektor in Kartenmitte setzen"], ["Move the sector to the centre of the current map view. Width, height and cell size stay the same.", "Sektor in die Mitte der aktuellen Kartenansicht verschieben. Breite, Höhe und Zellgröße bleiben gleich."], ["Moves the sector to the centre of the current map view. Width, height, cell size and engine profile stay the same. Pan or zoom the map to the place you want, then click. Scanned shapefiles are refreshed as for any other sector move; Undo does not apply – use Locations or History to go back.", "Verschiebt den Sektor in die Mitte der aktuellen Kartenansicht. Breite, Höhe, Zellgröße und Engine-Profil bleiben gleich. Karte auf den gewünschten Ort schieben oder zoomen, dann klicken. Gescannte Shapefiles werden wie bei jeder Sektorverschiebung aktualisiert; Rückgängig greift nicht – zum Zurückgehen Orte oder Verlauf nutzen."], ["Sector centred in view: {0}, {1} · {2} × {3} m", "Sektor in Kartenmitte gesetzt: {0}, {1} · {2} × {3} m"], ["UTM is not defined beyond 84° N / 80° S. Move the map first.", "UTM ist jenseits von 84° N / 80° S nicht definiert. Zuerst die Karte verschieben."], ["Rotate sector", "Sektor drehen"], ["Rotation (° clockwise)", "Drehung (° im Uhrzeigersinn)"], ["Align to map grid", "An Kartengitter ausrichten"], ["Align to UTM grid", "An UTM-Gitter ausrichten"], ["Or drag the orange handle above the sector. Ctrl = 5° steps.", "Oder den orangen Griff über dem Sektor ziehen. Strg = 5°-Schritte."], ["Map grid", "Kartengitter"], ["Display a map grid", "Kartengitter anzeigen"], ["Rotate (tilt) the sector, e.g. to align it with the map grid", "Sektor drehen, z. B. um ihn am Kartengitter auszurichten"], ["Off", "Aus"], ["Lat / lon", "Breite / Länge"], ["Sector", "Sektor"], ["Spacing", "Abstand"], ["Auto", "Auto"], ["Labels", "Beschriftung"], ["UTM = metric grid of the export CRS · Lat / lon = geographic graticule · Sector = game grid from the SW corner (0,0), follows rotation.", "UTM = metrisches Gitter des Export-KBS · Breite / Länge = geografisches Netz · Sektor = Spielgitter ab SW-Ecke (0,0), dreht mit."], ["Sector rotation {0}", "Sektordrehung {0}"], ["Aligned to the map grid (true north): {0}", "Am Kartengitter ausgerichtet (geografisch Nord): {0}"], ["Aligned to the UTM grid (0°)", "Am UTM-Gitter ausgerichtet (0°)"], ["Drag to rotate the sector (Ctrl = 5° steps)", "Ziehen, um den Sektor zu drehen (Strg = 5°-Schritte)"], ["Reset to 0°", "Auf 0° zurücksetzen"], ["Sector rotated {0} against the UTM grid. Exports follow the rotated sector; GeoTIFF, world files and shapefiles carry the rotation.", "Sektor um {0} gegen das UTM-Gitter gedreht. Exporte folgen dem gedrehten Sektor; GeoTIFF, World-Files und Shapefiles enthalten die Drehung."], [".asc cannot store a rotated grid – its GIS position is the unrotated box. Engines read it correctly; for GIS use the GeoTIFF.", ".asc kann kein gedrehtes Raster speichern – die GIS-Lage ist die ungedrehte Box. Engines lesen es korrekt; für GIS das GeoTIFF nutzen."], ["Rotated sector: WMS data is requested in lat/lon and resampled into the rotated grid.", "Gedrehter Sektor: WMS-Daten werden in Breite/Länge abgefragt und ins gedrehte Raster umgerechnet."]] };
 function i18nBuild(lang) {
   I18N.exact = new Map(); I18N.pats = [];
   const tr = (typeof I18N_TR !== 'undefined' && I18N_TR[lang]) || null; if (!tr) return;
@@ -4937,6 +4980,124 @@ function deleteShape(f) {
 $('btnDelMap').onclick = () => setDelMode(!R.delMode);
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { if (R.delMode) setDelMode(false); if (map.pm && map.pm.globalDrawModeEnabled && map.pm.globalDrawModeEnabled()) map.pm.disableDraw(); } });
 
+// ---------- sector rotation (tilt) ----------
+/* S.rot = clockwise angle of the sector's "up" axis from UTM grid north (degrees). */
+function trueNorthRot() {   // clockwise angle of true (geographic) north in the UTM grid at the sector centre = map-grid alignment
+  const z = utmZoneFor(S.lon), n = S.lat >= 0, a = utmForward(S.lat, S.lon, z, n), b = utmForward(S.lat + 0.01, S.lon, z, n);
+  return Math.atan2(b[0] - a[0], b[1] - a[1]) * 180 / Math.PI;
+}
+const normRot = v => { v = ((+v % 360) + 540) % 360 - 180; return Math.round(v * 100) / 100; };
+function setRot(v, quiet) {
+  S.rot = normRot(v); if (Math.abs(S.rot) < 0.005) S.rot = 0;
+  R.cache = {}; if (typeof ROCK !== 'undefined') ROCK.key = '';
+  syncInputs(); drawSector(); renderRotPop(); sectorChanged(); renderGrid();
+  if (!quiet) toast(`Sector rotation ${fmtRot(S.rot)}`, 1600);
+}
+const fmtRot = v => `${v > 0 ? '+' : ''}${(+v).toFixed(2)}°`;
+function renderRotPop() {
+  if (!$('rotPop')) return;
+  if (document.activeElement !== $('rotVal')) $('rotVal').value = S.rot || 0;
+  $('rotRange').value = Math.max(-45, Math.min(45, S.rot || 0));
+  const tn = trueNorthRot();
+  $('rotInfo').innerHTML = `UTM grid north = 0° · true north here = <b>${fmtRot(tn)}</b> (grid convergence)`;
+  $('btnRotMap').classList.toggle('on', !!S.rot);
+  $('lblRotMap').textContent = S.rot ? `Rotate ${fmtRot(S.rot)}` : 'Rotate sector';
+}
+$('btnRotMap').onclick = e => { e.stopPropagation(); $('gridPop').classList.remove('show'); renderRotPop(); $('rotPop').classList.toggle('show'); };
+$('rotRange').addEventListener('input', e => { S.rot = +e.target.value; $('rotVal').value = S.rot; drawSector(); renderGrid(); });
+$('rotRange').addEventListener('change', e => setRot(+e.target.value, true));
+$('rotVal').addEventListener('change', e => { const v = parseFloat(String(e.target.value).replace(',', '.')); if (isFinite(v)) setRot(v); });
+$('rotVal').addEventListener('keydown', e => { if (e.key === 'Enter') e.target.blur(); });
+$('btnRotTrue').onclick = () => { setRot(trueNorthRot(), true); toast(`Aligned to the map grid (true north): ${fmtRot(S.rot)}`, 2400); };
+$('btnRotUtm').onclick = () => { setRot(0, true); toast('Aligned to the UTM grid (0°)', 2000); };
+document.querySelectorAll('#rotPop [data-rstep]').forEach(b => b.onclick = () => setRot((S.rot || 0) + +b.dataset.rstep, true));
+document.addEventListener('click', e => { if (!e.target.closest('#rotPop') && !e.target.closest('#btnRotMap')) $('rotPop').classList.remove('show'); if (!e.target.closest('#gridPop') && !e.target.closest('#btnGridMap')) $('gridPop').classList.remove('show'); });
+// rotation handle on the map (above the north edge): drag to rotate, Ctrl/Alt snaps to 5°
+const rotHandle = L.marker([0, 0], { draggable: true, pmIgnore: true, zIndexOffset: 500, icon: L.divIcon({ className: '', html: '<div class="rhandle"><i class="i fa-solid fa-rotate"></i></div>', iconSize: [18, 18], iconAnchor: [9, 9] }) }).addTo(map);
+rotHandle.bindTooltip('Drag to rotate the sector (Ctrl = 5° steps)', { direction: 'top', offset: [0, -10] });
+const rotStem = L.polyline([], { color: '#f59e0b', weight: 2, dashArray: '4 4', interactive: false, pmIgnore: true }).addTo(map);
+function placeRotHandle() {
+  const s = sector(), off = Math.max(40, s.H * 0.08), a = s.toLatLon(s.E0 + s.W / 2, s.N0 + s.H), b = s.toLatLon(s.E0 + s.W / 2, s.N0 + s.H + off);
+  rotHandle.setLatLng(b); rotStem.setLatLngs([a, b]);
+}
+rotHandle.on('drag', e => {
+  const p = e.target.getLatLng(), z = utmZoneFor(S.lon), n = S.lat >= 0, c = utmForward(S.lat, S.lon, z, n), q = utmForward(p.lat, p.lng, z, n);
+  let a = Math.atan2(q[0] - c[0], q[1] - c[1]) * 180 / Math.PI;
+  a = KEYS.shift ? Math.round(a / 5) * 5 : Math.round(a * 10) / 10;
+  S.rot = normRot(a); if ($('rotPop').classList.contains('show')) renderRotPop();
+  const s = sector(); sectorPoly.setLatLngs(s.cornersLatLon()); sectorDash.setLatLngs(s.cornersLatLon());
+  rotStem.setLatLngs([s.toLatLon(s.E0 + s.W / 2, s.N0 + s.H), p]);
+});
+rotHandle.on('dragend', () => setRot(S.rot, true));
+
+// ---------- map grid overlay ----------
+const GRID = { layer: L.layerGroup().addTo(map) };
+const niceStep = (span, target) => { const raw = span / target, p = Math.pow(10, Math.floor(Math.log10(raw))); for (const m of [1, 2, 2.5, 5, 10]) if (m * p >= raw) return m * p; return 10 * p; };
+const fmtM = v => Math.abs(v) >= 1000 ? +(v / 1000).toFixed(3) + ' km' : Math.round(v) + ' m';
+function gridLabel(ll, txt, cls) { return L.marker(ll, { interactive: false, pmIgnore: true, keyboard: false, icon: L.divIcon({ className: '', html: `<div class="glab ${cls}">${txt}</div>`, iconSize: [0, 0] }) }); }
+function renderGrid() {
+  GRID.layer.clearLayers();
+  const mode = S.gridMode || 'off';
+  if ($('btnGridMap')) { $('btnGridMap').classList.toggle('on', mode !== 'off'); }
+  if (mode === 'off') return;
+  const b = map.getBounds(), lab = S.gridLabels !== false;
+  const add = (pts, st) => L.polyline(pts, { ...st, interactive: false, pmIgnore: true }).addTo(GRID.layer);
+  if (mode === 'latlon') {
+    const span = Math.max(b.getEast() - b.getWest(), b.getNorth() - b.getSouth());
+    const step = [10, 5, 2, 1, 0.5, 0.25, 0.1, 0.05, 0.02, 0.01, 0.005, 0.002, 0.001, 0.0005].find(v => span / v >= 5) || 0.0005;
+    const st = { color: '#38bdf8', weight: 1, opacity: 0.75 }, dg = step < 0.01 ? 4 : step < 0.1 ? 3 : step < 1 ? 2 : 0;
+    for (let lo = Math.ceil(b.getWest() / step) * step; lo <= b.getEast(); lo += step) { add([[b.getSouth(), lo], [b.getNorth(), lo]], st); if (lab) gridLabel([b.getSouth() + (b.getNorth() - b.getSouth()) * 0.15, lo], `${lo.toFixed(dg)}°`, 'v').addTo(GRID.layer); }
+    for (let la = Math.ceil(b.getSouth() / step) * step; la <= b.getNorth(); la += step) { add([[la, b.getWest()], [la, b.getEast()]], st); if (lab) gridLabel([la, b.getWest()], `${la.toFixed(dg)}°`, 'h').addTo(GRID.layer); }
+    return;
+  }
+  if (mode === 'utm') {
+    const z = utmZoneFor(map.getCenter().lng), n = map.getCenter().lat >= 0;
+    const cs = [b.getSouthWest(), b.getNorthWest(), b.getNorthEast(), b.getSouthEast()].map(p => utmForward(p.lat, p.lng, z, n));
+    const e0 = Math.min(...cs.map(c => c[0])), e1 = Math.max(...cs.map(c => c[0])), n0 = Math.min(...cs.map(c => c[1])), n1 = Math.max(...cs.map(c => c[1]));
+    let step = +S.gridStep || niceStep(Math.max(e1 - e0, n1 - n0), 8);
+    while ((e1 - e0) / step + (n1 - n0) / step > 160) step *= 2;
+    const st = { color: '#f8fafc', weight: 1, opacity: 0.7, dashArray: '2 4' }, stM = { ...st, weight: 1.6, opacity: 0.9, dashArray: null }, K = 24;
+    for (let e = Math.ceil(e0 / step) * step; e <= e1; e += step) {
+      const major = Math.abs(e / (step * 10) - Math.round(e / (step * 10))) < 1e-6;
+      add(Array.from({ length: K + 1 }, (_, i) => utmInverse(e, n0 + (n1 - n0) * i / K, z, n)), major ? stM : st);
+      if (lab) gridLabel(utmInverse(e, n0 + (n1 - n0) * 0.15, z, n), `E ${(e / 1000).toFixed(step < 1000 ? 1 : 0)}k`, 'v').addTo(GRID.layer);
+    }
+    for (let y = Math.ceil(n0 / step) * step; y <= n1; y += step) {
+      const major = Math.abs(y / (step * 10) - Math.round(y / (step * 10))) < 1e-6;
+      add(Array.from({ length: K + 1 }, (_, i) => utmInverse(e0 + (e1 - e0) * i / K, y, z, n)), major ? stM : st);
+      if (lab) gridLabel(utmInverse(e0 + (e1 - e0) * 0.01, y, z, n), `N ${(y / 1000).toFixed(step < 1000 ? 1 : 0)}k`, 'h').addTo(GRID.layer);
+    }
+    return;
+  }
+  // sector grid: aligned with the (rotated) sector, origin = SW corner = game 0,0
+  const s = sector();
+  let step = +S.gridStep || niceStep(Math.max(s.W, s.H), 10);
+  while (s.W / step + s.H / step > 200) step *= 2;
+  const st = { color: '#22d3ee', weight: 1, opacity: 0.8 }, stM = { ...st, weight: 2, opacity: 1 };
+  for (let x = 0; x <= s.W + 1e-6; x += step) {
+    const major = Math.round(x / step) % 5 === 0;
+    add([s.toLatLon(s.E0 + x, s.N0), s.toLatLon(s.E0 + x, s.N0 + s.H)], major ? stM : st);
+    if (lab && (major || step * 5 > s.W / 4)) gridLabel(s.toLatLon(s.E0 + x, s.N0), fmtM(x), 'v sg').addTo(GRID.layer);
+  }
+  for (let y = 0; y <= s.H + 1e-6; y += step) {
+    const major = Math.round(y / step) % 5 === 0;
+    add([s.toLatLon(s.E0, s.N0 + y), s.toLatLon(s.E0 + s.W, s.N0 + y)], major ? stM : st);
+    if (lab && y > 0 && (major || step * 5 > s.H / 4)) gridLabel(s.toLatLon(s.E0, s.N0 + y), fmtM(y), 'h sg').addTo(GRID.layer);
+  }
+}
+function renderGridPop() {
+  document.querySelectorAll('#gridSeg button').forEach(b => b.classList.toggle('on', b.dataset.g === (S.gridMode || 'off')));
+  $('gridStep').value = String(S.gridStep || ''); $('gridLabels').checked = S.gridLabels !== false;
+  $('gridStep').disabled = !['utm', 'sector'].includes(S.gridMode);
+}
+$('btnGridMap').onclick = e => { e.stopPropagation(); $('rotPop').classList.remove('show'); renderGridPop(); $('gridPop').classList.toggle('show'); };
+document.querySelectorAll('#gridSeg button').forEach(b => b.onclick = () => { S.gridMode = b.dataset.g; renderGridPop(); renderGrid(); saveSessionSoon(); });
+$('gridStep').onchange = e => { S.gridStep = e.target.value ? +e.target.value : ''; renderGrid(); saveSessionSoon(); };
+$('gridLabels').onchange = e => { S.gridLabels = e.target.checked; renderGrid(); saveSessionSoon(); };
+map.on('moveend zoomend', () => { if (S.gridMode && S.gridMode !== 'off') renderGrid(); });
+const _drawSectorR = drawSector;
+drawSector = function (a, b) { _drawSectorR(a, b); placeRotHandle(); if (S.gridMode === 'sector') renderGrid(); };
+
 // ---------- init ----------
 try { const p = LS.get('gtg_perf', null); if (p && p.tilesPerSec) PERF.tilesPerSec = p.tilesPerSec; } catch (e) { }
 setInterval(() => LS.set('gtg_perf', PERF), 10000);
@@ -4946,7 +5107,7 @@ applyModes();
 R.custom.forEach(ensureDz); renderTpl(); renderDz(); updSel();
 $('dzNewType').value = FXK[S.dzType] && !FXK[S.dzType].lineOnly ? S.dzType : 'explosion';
 $('dzNewLineType').value = FXK[S.dzLineType] && FXK[S.dzLineType].line ? S.dzLineType : 'crack';
-applyTheme(); renderOvMenu(); applyOvWms(); renderLineW();
+applyTheme(); renderOvMenu(); applyOvWms(); renderLineW(); drawSector(); renderRotPop(); renderGrid();
 if (_restored) {
   map.setView([S.lat, S.lon], 14);
   if (R._pendingCustom && R._pendingCustom.length) restore(JSON.stringify({ custom: R._pendingCustom, off: [], subActive: S.subActive }));
