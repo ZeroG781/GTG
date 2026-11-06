@@ -1,11 +1,11 @@
 # GTG Converter – GIS to Game
 
 ZeroG’s GIS TO GAME (GTG) Converter turns any place on Earth into game-ready terrain data. 
-You pick a sector on a map, and the tool produces a georeferenced heightmap, a satellite image, surface masks for material painting, shapefiles of roads, rivers, forests and buildings, and a reshaped (“morphed”) heightmap in which roads are graded, rivers are carved and buildings stand on smoothed ground. Optional special zones add craters, trenches, berms, dams, pits, dunes and other features on top.
+You pick a sector on a map, and the tool produces a georeferenced heightmap, a satellite image, surface masks for material painting, shapefiles of roads, rivers, forests and buildings, and a reshaped (“morphed”) heightmap in which roads are graded, rivers are carved and buildings stand on smoothed ground. 
+
+Optional special zones add craters, trenches, berms, dams, pits, dunes and other features on top.
+
 The tool targets map makers for Arma Reforger (Enfusion), Arma 3 (Terrain Builder), Unreal Engine and Unity, and anyone who needs real-world terrain in a metric grid. Everything runs inside your web browser: there is nothing to install, no account and no server of its own. Data is loaded directly from public services (OpenStreetMap, AWS Terrain Tiles, Sentinel-2 cloudless, OpenTopoMap) or from your own files and WMS servers.
-
-
-No install, no account, no API keys.
 
 <!-- Add a screenshot as docs/screenshot.png, then remove this comment line -->
 ![Screenshot](Screenshot.png)
