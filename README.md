@@ -23,7 +23,7 @@ The tool targets map makers for Arma Reforger (Enfusion), Arma 3 (Terrain Builde
 
 ## Quick start
 
-It is a single HTML file. Download `index.html` and open it in your browser.
+It is a single HTML file. Download `GTG_Converter_v1.0.html` and open it in your browser.
 An internet connection is still needed for map tiles, OpenStreetMap data and the libraries loaded from CDNs.
 
 1. Open the tool in a current Chrome, Edge or Firefox (desktop).
